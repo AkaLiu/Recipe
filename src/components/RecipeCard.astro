@@ -1,0 +1,65 @@
+---
+interface Props {
+  title: string;
+  titleEn?: string;
+  category: string;
+  prepTime: string;
+  cookTime: string;
+  servings: number;
+  coverImage: string;
+  id: string; // Pass the content entry id
+}
+
+const { title, titleEn, category, prepTime, cookTime, servings, coverImage, id } = Astro.props;
+// Extract slug from filename (keeps Chinese characters)
+const slug = id.replace(/\.mdx?$/, '').split('/').pop() || '';
+---
+
+<a href={`/recipes/${category}/${slug}`} class="recipe-card group">
+  <div class="relative overflow-hidden aspect-[4/3]">
+    <img
+      src={coverImage}
+      alt={title}
+      class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+      loading="lazy"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+    <span class="absolute top-3 left-3 px-2 py-1 text-xs font-medium bg-white/90 text-terracotta-700 rounded-full">
+      {category}
+    </span>
+  </div>
+
+  <div class="p-4">
+    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-terracotta-600 transition-colors">
+      {title}
+    </h3>
+    {titleEn && <p class="text-sm text-gray-500 mt-0.5">{titleEn}</p>}
+
+    <div class="flex items-center gap-4 mt-3 text-sm text-gray-600">
+      {prepTime && (
+        <span class="flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          {prepTime}
+        </span>
+      )}
+      {cookTime && (
+        <span class="flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+          </svg>
+          {cookTime}
+        </span>
+      )}
+      {servings && (
+        <span class="flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          {servings}
+        </span>
+      )}
+    </div>
+  </div>
+</a>

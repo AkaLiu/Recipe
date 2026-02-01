@@ -1,0 +1,193 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream-50 text-gray-800 antialiased;
+  }
+}
+
+@layer components {
+  .recipe-card {
+    @apply block bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden;
+  }
+
+  .recipe-hero {
+    @apply relative h-64 md:h-96 bg-cover bg-center;
+  }
+}
+
+/* Print / PDF Export Styles - LaTeX-inspired */
+@media print {
+  @page {
+    size: A4;
+    margin: 1.5cm;
+    @top-center {
+      content: "";
+    }
+    @bottom-center {
+      content: "菜谱收藏 | Recipe Collection";
+      font-size: 9pt;
+      color: #888;
+    }
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  body {
+    font-size: 11pt;
+    line-height: 1.5;
+    background: white;
+    color: #333;
+  }
+
+  /* Recipe page container */
+  article {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Typography matching LaTeX style */
+  h1 {
+    font-size: 22pt !important;
+    color: #a41034 !important;
+    font-family: Merriweather, Georgia, serif;
+    margin-bottom: 0.5em !important;
+    page-break-after: avoid;
+  }
+
+  h2 {
+    font-size: 16pt !important;
+    color: #a41034 !important;
+    font-family: Merriweather, Georgia, serif;
+    margin-top: 1.2em !important;
+    margin-bottom: 0.5em !important;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 13pt !important;
+    color: #a41034 !important;
+    font-family: Merriweather, Georgia, serif;
+    margin-top: 1em !important;
+    margin-bottom: 0.3em !important;
+  }
+
+  p {
+    margin-bottom: 0.8em !important;
+  }
+
+  /* Tables - for ingredients */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0 !important;
+    page-break-inside: avoid;
+  }
+
+  th, td {
+    padding: 6px 10px !important;
+    text-align: left;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  th {
+    font-weight: 600;
+    color: #a41034;
+    border-bottom: 2px solid #a41034;
+  }
+
+  /* Lists - for steps */
+  ul, ol {
+    margin: 0.5em 0 !important;
+    padding-left: 1.5em !important;
+  }
+
+  li {
+    margin-bottom: 0.5em !important;
+    line-height: 1.4;
+  }
+
+  /* Image handling */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Two-column layout for recipes */
+  .print\:float-left {
+    float: left !important;
+  }
+
+  .print\:float-right {
+    float: right !important;
+  }
+
+  .print\:clear-both {
+    clear: both !important;
+  }
+
+  /* Avoid breaking recipe content */
+  .prose > * {
+    page-break-inside: avoid;
+  }
+
+  /* Links - show URL in print */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #888;
+  }
+
+  /* Footer */
+  footer {
+    display: none !important;
+  }
+
+  /* Step numbering for print */
+  ol li {
+    list-style-type: none !important;
+    counter-increment: step-counter;
+  }
+
+  ol li::before {
+    content: counter(step-counter) ". " !important;
+    font-weight: bold !important;
+    color: #a41034 !important;
+  }
+
+  /* Decorative tip box - LaTeX style */
+  .print-tip-box {
+    border-left: 3px solid #a41034 !important;
+    padding-left: 1em !important;
+    margin: 1em 0 !important;
+    font-style: italic !important;
+    color: #666 !important;
+  }
+
+  /* Chapter/Section styling for PDF */
+  section {
+    page-break-inside: avoid !important;
+  }
+
+  /* Ensure proper page breaks */
+  .page-break-before {
+    page-break-before: always !important;
+  }
+
+  .avoid-break {
+    page-break-inside: avoid !important;
+  }
+}

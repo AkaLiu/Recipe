@@ -1,0 +1,474 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  return [];
+}
+
+const allRecipes = await getCollection('recipes');
+
+// Render all recipes to get their body content
+const renderedRecipes = await Promise.all(
+  allRecipes.map(async (recipe) => {
+    const { Content } = await recipe.render();
+    return {
+      ...recipe,
+      content: recipe.body,
+    };
+  })
+);
+
+// Group recipes by category
+const recipesByCategory = renderedRecipes.reduce((acc, recipe) => {
+  const category = recipe.data.category;
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push({
+    ...recipe.data,
+    id: recipe.id,
+    body: recipe.content,
+    slug: recipe.data.slug || recipe.id.replace(/\.mdx?$/, '').split('/').pop(),
+  });
+  return acc;
+}, {} as Record<string, typeof renderedRecipes[0]['data'] & { body: string }[]>);
+
+const categories = [
+  { name: '鲁', label: '鲁菜 (Shandong)', emoji: '🥬' },
+  { name: '川', label: '川菜 (Sichuan-Chongqing)', emoji: '🌶️' },
+  { name: '粤闽', label: '粤闽 (Cantonese-Fujian)', emoji: '🥘' },
+  { name: '淮扬', label: '淮扬 (Huaiyang)', emoji: '🍲' },
+  { name: '徽湘', label: '徽湘 (Anhui-Hunan)', emoji: '🐟' },
+  { name: '云贵', label: '云贵 (Yunnan-Guizhou)', emoji: '🦐' },
+  { name: '意法', label: '意法 (Italian-French)', emoji: '🍝' },
+  { name: '南洋', label: '南洋 (Southeast Asian)', emoji: '🍋' },
+  { name: 'Silk-Road', label: '丝路风味 (Silk Road)', emoji: '🛤️' },
+  { name: 'Desserts', label: '甜点 (Desserts)', emoji: '🍰' },
+  { name: 'Drinks', label: '饮品 (Drinks)', emoji: '🧋' },
+];
+
+const categoryLabels: Record<string, string> = {
+  '鲁': '鲁菜',
+  '川': '川菜',
+  '粤闽': '粤闽',
+  '淮扬': '淮扬',
+  '徽湘': '徽湘',
+  '云贵': '云贵',
+  '意法': '意法',
+  '南洋': '南洋',
+  'Silk-Road': '丝路风味',
+  'Desserts': '甜点',
+  'Drinks': '饮品',
+};
+
+// Helper function to parse ingredients from recipe body
+function parseIngredients(body: string): string[] {
+  const match = body.match(/## 食材\s*\n([\s\S]*?)(?=## 步骤)/);
+  if (!match) return [];
+  const table = match[1];
+  return table.split('\n')
+    .filter(line => line.match(/\|/) && !line.match(/---/))
+    .slice(2);
+}
+
+// Helper function to parse steps from recipe body
+function parseSteps(body: string): string[] {
+  const match = body.match(/## 步骤\s*\n([\s\S]*?)(?=## 小贴士|$)/);
+  if (!match) return [];
+  return match[1]
+    .split(/\n\d+\.\s*/)
+    .filter(s => s.trim().length > 0);
+}
+
+// Helper function to parse tips from recipe body
+function parseTips(body: string): string[] {
+  const match = body.match(/## 小贴士\s*\n([\s\S]*?)$/);
+  if (!match) return [];
+  return match[1]
+    .split(/^\s*-\s*/gm)
+    .filter(t => t.trim().length > 0);
+}
+---
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>菜谱收藏 | Recipe Collection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style is:global>
+    @page {
+      size: A4;
+      margin: 1.5cm;
+      @top-center {
+        content: "";
+      }
+      @bottom-center {
+        content: "菜谱收藏 | Recipe Collection";
+        font-size: 9pt;
+        color: #888;
+      }
+    }
+
+    @media print {
+      .no-print { display: none !important; }
+      .page-break { page-break-before: always !important; }
+      .avoid-break { page-break-inside: avoid !important; }
+      body { font-size: 11pt; }
+      h1 { font-size: 22pt !important; color: #a41034 !important; font-family: Merriweather, serif; }
+      h2 { font-size: 16pt !important; color: #a41034 !important; font-family: Merriweather, serif; }
+      h3 { font-size: 13pt !important; color: #a41034 !important; font-family: Merriweather, serif; }
+      table { page-break-inside: avoid; }
+      ol li { page-break-inside: avoid; }
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans SC', system-ui, sans-serif;
+      line-height: 1.5;
+      margin: 0;
+      padding: 0;
+    }
+    .cover-page {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, #a41034 0%, #d94324 100%);
+      color: white;
+      padding: 2cm;
+    }
+    .cover-title {
+      font-family: 'Merriweather', Georgia, serif;
+      font-size: 48pt;
+      font-weight: 700;
+      margin-bottom: 1em;
+    }
+    .cover-subtitle {
+      font-size: 24pt;
+      opacity: 0.9;
+      margin-bottom: 2em;
+    }
+    .cover-meta {
+      font-size: 14pt;
+      opacity: 0.8;
+    }
+    .toc-page {
+      padding: 2cm;
+    }
+    .toc-title {
+      font-family: 'Merriweather', Georgia, serif;
+      font-size: 28pt;
+      color: #a41034;
+      text-align: center;
+      margin-bottom: 2em;
+      border-bottom: 2px solid #a41034;
+      padding-bottom: 0.5em;
+    }
+    .toc-category {
+      font-size: 14pt;
+      margin: 1em 0;
+      page-break-inside: avoid;
+    }
+    .toc-category-title {
+      font-weight: 700;
+      color: #a41034;
+    }
+    .toc-recipes {
+      margin-left: 1em;
+      font-size: 11pt;
+    }
+    .recipe-page {
+      padding: 0;
+      margin: 0;
+    }
+    .recipe-header {
+      border-bottom: 2px solid #a41034;
+      padding-bottom: 0.5em;
+      margin-bottom: 1em;
+    }
+    .recipe-title {
+      font-family: 'Merriweather', Georgia, serif;
+      font-size: 22pt;
+      color: #a41034;
+      margin: 0;
+    }
+    .recipe-meta {
+      color: #666;
+      font-size: 10pt;
+      margin-top: 0.5em;
+    }
+    .recipe-body {
+      display: flow-root;
+    }
+    .ingredients {
+      float: left;
+      width: 35%;
+      padding-right: 1em;
+      border-right: 1px solid #eee;
+      margin-right: 1em;
+    }
+    .ingredients h3 {
+      font-size: 14pt;
+      color: #a41034;
+      margin-top: 0;
+      margin-bottom: 0.5em;
+      font-family: 'Merriweather', Georgia, serif;
+    }
+    .ingredients table {
+      width: 100%;
+      font-size: 10pt;
+      border-collapse: collapse;
+    }
+    .ingredients td {
+      padding: 0.3em 0;
+      border-bottom: 1px solid #eee;
+    }
+    .ingredients td:first-child {
+      text-align: right;
+      color: #666;
+      padding-right: 0.5em;
+    }
+    .instructions {
+      float: right;
+      width: 60%;
+    }
+    .instructions h3 {
+      font-size: 14pt;
+      color: #a41034;
+      margin-top: 0;
+      margin-bottom: 0.5em;
+      font-family: 'Merriweather', Georgia, serif;
+    }
+    .instructions ol {
+      margin: 0;
+      padding-left: 1.5em;
+    }
+    .instructions li {
+      margin-bottom: 0.5em;
+      line-height: 1.4;
+    }
+    .tips {
+      clear: both;
+      margin-top: 1.5em;
+      padding-top: 1em;
+      border-top: 1px dashed #ccc;
+    }
+    .tips h3 {
+      font-size: 12pt;
+      color: #a41034;
+      margin-bottom: 0.5em;
+      font-family: 'Merriweather', Georgia, serif;
+    }
+    .tips ul {
+      margin: 0;
+      padding-left: 1.2em;
+      font-style: italic;
+      color: #666;
+    }
+    .tips li {
+      margin-bottom: 0.3em;
+    }
+    .recipe-footer {
+      margin-top: 2em;
+      padding-top: 0.5em;
+      border-top: 1px solid #eee;
+      text-align: center;
+      font-size: 9pt;
+      color: #999;
+    }
+    /* Category Section Divider Page */
+    .section-page {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, #faf6f3 0%, #fff 100%);
+      padding: 2cm;
+      border: 3px double #a41034;
+      margin: 0;
+    }
+    .section-emoji {
+      font-size: 64pt;
+      margin-bottom: 0.5em;
+    }
+    .section-title {
+      font-family: 'Merriweather', Georgia, serif;
+      font-size: 36pt;
+      font-weight: 700;
+      color: #a41034;
+      margin-bottom: 0.2em;
+    }
+    .section-title-en {
+      font-size: 18pt;
+      color: #888;
+      margin-bottom: 1em;
+      font-style: italic;
+    }
+    .section-count {
+      font-size: 12pt;
+      color: #666;
+      padding: 0.5em 1.5em;
+      border: 1px solid #ddd;
+      border-radius: 2em;
+    }
+    .print-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      padding: 1rem 1.5rem;
+      background: #a41034;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .print-btn:hover {
+      background: #861229;
+    }
+  </style>
+</head>
+<body>
+  <!-- Cover Page -->
+  <div class="cover-page">
+    <h1 class="cover-title">菜谱收藏</h1>
+    <p class="cover-subtitle">Recipe Collection</p>
+    <p class="cover-meta">
+      {allRecipes.length} 道菜谱 | {new Date().getFullYear()}年
+    </p>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- Table of Contents -->
+  <div class="toc-page">
+    <h1 class="toc-title">目录 | Contents</h1>
+    {categories.map((cat) => {
+      const recipes = recipesByCategory[cat.name];
+      if (!recipes || recipes.length === 0) return null;
+      return (
+        <div class="toc-category">
+          <span class="toc-category-title">{cat.emoji} {cat.label}</span>
+          <div class="toc-recipes">
+            {recipes.map((r) => (
+              <div>{r.title} {r.titleEn ? `| ${r.titleEn}` : ''}</div>
+            ))}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- Recipe Pages with Section Dividers -->
+  {categories.map((cat, index) => {
+    const recipes = recipesByCategory[cat.name];
+    if (!recipes || recipes.length === 0) return null;
+
+    return (
+      <>
+        {/* Category Section Divider Page */}
+        <div class="section-page page-break">
+          <div class="section-emoji">{cat.emoji}</div>
+          <h1 class="section-title">{categoryLabels[cat.name]}</h1>
+          <p class="section-title-en">{cat.label.split('(')[1]?.replace(')', '') || ''}</p>
+          <p class="section-count">{recipes.length} 道菜谱</p>
+        </div>
+
+        {/* Category Title on Recipe Page */}
+        <div class="page-break"></div>
+        {recipes.map((recipe) => {
+          const ingredientRows = parseIngredients(recipe.body || '');
+          const stepItems = parseSteps(recipe.body || '');
+          const tipItems = parseTips(recipe.body || '');
+
+          return (
+            <div class="recipe-page" style={{ padding: '1cm' }}>
+              <header class="recipe-header">
+                <h1 class="recipe-title">{recipe.title}</h1>
+                {recipe.titleEn && <span style={{ color: '#666' }}>{recipe.titleEn}</span>}
+                <div class="recipe-meta">
+                  {recipe.prepTime && <span>准备: {recipe.prepTime}</span>}
+                  {recipe.cookTime && <span> | 烹饪: {recipe.cookTime}</span>}
+                  {recipe.servings && <span> | {recipe.servings}人份</span>}
+                  <span> | {categoryLabels[cat.name]}</span>
+                </div>
+              </header>
+
+              <div class="recipe-body">
+                {ingredientRows.length > 0 && (
+                  <div class="ingredients avoid-break">
+                    <h3>食材 Ingredients</h3>
+                    <table>
+                      <tbody>
+                        {ingredientRows.map(row => {
+                          const cells = row.split('|').filter(c => c.trim());
+                          if (cells.length >= 3) {
+                            return (
+                              <tr>
+                                <td>{cells[1].trim()}</td>
+                                <td>{cells[2].trim()}</td>
+                              </tr>
+                            );
+                          }
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {stepItems.length > 0 && (
+                  <div class="instructions avoid-break">
+                    <h3>步骤 Instructions</h3>
+                    <ol>
+                      {stepItems.map((step) => (
+                        <li>{step.trim()}</li>
+                      ))}
+                    </ol>
+                  </div>
+                )}
+
+                {tipItems.length > 0 && (
+                  <div class="tips avoid-break">
+                    <h3>小贴士 Tips</h3>
+                    <ul>
+                      {tipItems.map(tip => (
+                        <li>{tip.trim()}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              <div class="recipe-footer">
+                菜谱收藏 | Recipe Collection
+              </div>
+            </div>
+          );
+        })}
+      </>
+    );
+  })}
+
+  <!-- Print Button (screen only) -->
+  <button class="print-btn no-print" onclick="window.print()">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+    导出 PDF
+  </button>
+</body>
+</html>

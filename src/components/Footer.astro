@@ -1,0 +1,47 @@
+---
+const categories = [
+  { name: '鲁', label: '鲁菜' },
+  { name: '川', label: '川菜' },
+  { name: '粤闽', label: '粤闽' },
+  { name: '淮扬', label: '淮扬' },
+  { name: '徽湘', label: '徽湘' },
+  { name: '云贵', label: '云贵' },
+  { name: '意法', label: '意法' },
+  { name: '南洋', label: '南洋' },
+  { name: 'Silk-Road', label: '丝路' },
+  { name: 'Desserts', label: '甜点' },
+  { name: 'Drinks', label: '饮品' },
+];
+---
+
+<footer class="bg-gray-50 border-t no-print">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="col-span-2 md:col-span-1">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-2xl">🍳</span>
+          <span class="text-xl font-serif font-bold text-terracotta-800">菜谱</span>
+        </div>
+        <p class="text-sm text-gray-500">
+          A personal collection of recipes from various Chinese and international cuisines.
+        </p>
+      </div>
+
+      {categories.map((cat) => (
+        <div>
+          <h3 class="font-semibold text-gray-900 mb-2">{cat.label}</h3>
+          <a
+            href={`/recipes/${cat.name}`}
+            class="text-sm text-gray-500 hover:text-terracotta-600 transition-colors"
+          >
+            浏览菜谱
+          </a>
+        </div>
+      ))}
+    </div>
+
+    <div class="border-t mt-8 pt-8 text-center text-sm text-gray-500">
+      <p>&copy; {new Date().getFullYear()} Recipe Collection. Built with Astro.</p>
+    </div>
+  </div>
+</footer>

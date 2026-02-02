@@ -31,8 +31,9 @@ Recipes are stored as MDX files in `src/content/recipes/{category}/` using Astro
 
 ### Pages & Routing
 - `/` - Homepage with category grid
-- `/recipes/{category}` - Category listing (dynamic route)
-- `/recipes/{category}/{slug}` - Individual recipe detail (dynamic route)
+- `/Recipe/{category}` - Category listing (dynamic route)
+- `/Recipe/{category}/{slug}` - Individual recipe detail (dynamic route)
+- `/Recipe/book` - Export all recipes as a single PDF book
 
 ### Components
 - `BaseLayout.astro` - Main HTML wrapper with Navigation and Footer
@@ -46,7 +47,6 @@ Recipes are stored as MDX files in `src/content/recipes/{category}/` using Astro
 ---
 title: 菜谱名称
 titleEn: English Name (optional)
-slug: url-friendly-slug  # Required for URL routing
 category: 菜系分类
 prepTime: "准备时间"
 cookTime: "烹饪时间"
@@ -56,6 +56,7 @@ servings: 人数
 coverImage: "/images/recipes/图片文件名.jpg"
 difficulty: easy/medium/hard (optional)
 tags: ["tag1", "tag2"] (optional)
+robot: "机器人名称" (optional, for recipes using robot assistance)
 ---
 
 ## 食材
@@ -67,6 +68,8 @@ tags: ["tag1", "tag2"] (optional)
 ## 小贴士
 - 提示
 ```
+
+**Note**: The URL slug is derived from the MDX filename (Chinese characters preserved). Place recipe files in `src/content/recipes/{category}/{中文名}.mdx`.
 
 ## PDF Export
 

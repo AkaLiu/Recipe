@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
-import RecipeLayout from '../../../layouts/RecipeLayout.astro';
-import RecipeMeta from '../../../components/RecipeMeta.astro';
+import RecipeLayout from '../../layouts/RecipeLayout.astro';
+import RecipeMeta from '../../components/RecipeMeta.astro';
 
 export async function getStaticPaths() {
   const recipes = await getCollection('recipes');
@@ -87,7 +87,7 @@ const { Content } = await render(recipe);
           导出 PDF
         </button>
         <a
-          href={`/Recipe/recipes/${recipe.data.category}`}
+          href={`/Recipe/${recipe.data.category}`}
           class="px-6 py-3 border-2 border-terracotta-600 text-terracotta-600 rounded-lg hover:bg-terracotta-50 transition-colors font-medium inline-flex items-center gap-2"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

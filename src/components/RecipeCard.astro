@@ -15,7 +15,7 @@ const { title, titleEn, category, prepTime, cookTime, servings, coverImage, id }
 const slug = id.replace(/\.mdx?$/, '').split('/').pop() || '';
 ---
 
-<a href={`/Recipe/recipes/${category}/${slug}`} class="recipe-card group">
+<a href={`/Recipe/${category}/${slug}`} class="recipe-card group">
   <div class="relative overflow-hidden aspect-[4/3]">
     <img
       src={coverImage}

@@ -1,16 +1,16 @@
 ---
 const categories = [
-  { name: '鲁', label: '鲁菜', path: '/recipes/鲁' },
-  { name: '川', label: '川菜', path: '/recipes/川' },
-  { name: '粤闽', label: '粤闽', path: '/recipes/粤闽' },
-  { name: '淮扬', label: '淮扬', path: '/recipes/淮扬' },
-  { name: '徽湘', label: '徽湘', path: '/recipes/徽湘' },
-  { name: '云贵', label: '云贵', path: '/recipes/云贵' },
-  { name: '意法', label: '意法', path: '/recipes/意法' },
-  { name: '南洋', label: '南洋', path: '/recipes/南洋' },
-  { name: 'Silk-Road', label: '丝路', path: '/recipes/Silk-Road' },
-  { name: 'Desserts', label: '甜点', path: '/recipes/Desserts' },
-  { name: 'Drinks', label: '饮品', path: '/recipes/Drinks' },
+  { name: '鲁', label: '鲁菜', path: '/Recipe/鲁' },
+  { name: '川', label: '川菜', path: '/Recipe/川' },
+  { name: '粤闽', label: '粤闽', path: '/Recipe/粤闽' },
+  { name: '淮扬', label: '淮扬', path: '/Recipe/淮扬' },
+  { name: '徽湘', label: '徽湘', path: '/Recipe/徽湘' },
+  { name: '云贵', label: '云贵', path: '/Recipe/云贵' },
+  { name: '意法', label: '意法', path: '/Recipe/意法' },
+  { name: '南洋', label: '南洋', path: '/Recipe/南洋' },
+  { name: 'Silk-Road', label: '丝路', path: '/Recipe/Silk-Road' },
+  { name: 'Desserts', label: '甜点', path: '/Recipe/Desserts' },
+  { name: 'Drinks', label: '饮品', path: '/Recipe/Drinks' },
 ];
 
 const currentPath = Astro.url.pathname;
@@ -19,7 +19,7 @@ const currentPath = Astro.url.pathname;
 <header class="bg-white shadow-sm sticky top-0 z-50 no-print">
   <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center h-16">
-      <a href="/" class="flex items-center gap-2">
+      <a href="/Recipe" class="flex items-center gap-2">
         <span class="text-2xl">🍳</span>
         <span class="text-xl font-serif font-bold text-terracotta-800">菜谱</span>
       </a>

@@ -64,28 +64,30 @@ const categoryLabels: Record<string, string> = {
 
 // Helper function to parse ingredients from recipe body
 function parseIngredients(body: string): string[] {
-  const match = body.match(/## 食材\s*\n([\s\S]*?)(?=## 步骤)/);
+  const match = body.match(/##\s*食材[\s\S]*?(\n|$)(?=##\s*步骤)/i);
   if (!match) return [];
-  const table = match[1];
+  const table = match[0].replace(/##\s*食材[\s\S]*?(\n|$)/, '');
   return table.split('\n')
-    .filter(line => line.match(/\|/) && !line.match(/---/))
-    .slice(2);
+    .filter(line => line.includes('|') && !line.match(/^\s*\|[\s\-:|]+\|$/))
+    .filter(line => !line.match(/^\s*\|?\s*用量/)); // 过滤表头行
 }
 
 // Helper function to parse steps from recipe body
 function parseSteps(body: string): string[] {
-  const match = body.match(/## 步骤\s*\n([\s\S]*?)(?=## 小贴士|$)/);
+  const match = body.match(/##\s*步骤[\s\S]*?(?=##\s*小贴士|$)/i);
   if (!match) return [];
-  return match[1]
+  const content = match[0].replace(/##\s*步骤[\s\S]*?/, '');
+  return content
     .split(/\n\d+\.\s*/)
     .filter(s => s.trim().length > 0);
 }
 
 // Helper function to parse tips from recipe body
 function parseTips(body: string): string[] {
-  const match = body.match(/## 小贴士\s*\n([\s\S]*?)$/);
+  const match = body.match(/##\s*小贴士[\s\S]*?$/i);
   if (!match) return [];
-  return match[1]
+  const content = match[0].replace(/##\s*小贴士[\s\S]*?/, '');
+  return content
     .split(/^\s*-\s*/gm)
     .filter(t => t.trim().length > 0);
 }
@@ -401,17 +403,20 @@ function parseTips(body: string): string[] {
                 <h1 class="recipe-title">{recipe.title}</h1>
                 {recipe.titleEn && <span style={{ color: '#666' }}>{recipe.titleEn}</span>}
                 <div class="recipe-meta">
-                  {recipe.prepTime && <span>准备: {recipe.prepTime}</span>}
-                  {recipe.cookTime && <span> | 烹饪: {recipe.cookTime}</span>}
-                  {recipe.servings && <span> | {recipe.servings}人份</span>}
-                  <span> | {categoryLabels[cat.name]}</span>
+                  <span>{categoryLabels[cat.name]}</span>
                 </div>
               </header>
+
+              {recipe.coverImage && (
+                <div style={{ marginBottom: '1em' }}>
+                  <img src={recipe.coverImage} alt={recipe.title} style={{ maxWidth: '100%', maxHeight: '8cm', objectFit: 'contain' }} />
+                </div>
+              )}
 
               <div class="recipe-body">
                 {ingredientRows.length > 0 && (
                   <div class="ingredients avoid-break">
-                    <h3>食材 Ingredients</h3>
+                    <h3>食材</h3>
                     <table>
                       <tbody>
                         {ingredientRows.map(row => {
@@ -432,7 +437,7 @@ function parseTips(body: string): string[] {
 
                 {stepItems.length > 0 && (
                   <div class="instructions avoid-break">
-                    <h3>步骤 Instructions</h3>
+                    <h3>步骤</h3>
                     <ol>
                       {stepItems.map((step) => (
                         <li>{step.trim()}</li>
@@ -443,7 +448,7 @@ function parseTips(body: string): string[] {
 
                 {tipItems.length > 0 && (
                   <div class="tips avoid-break">
-                    <h3>小贴士 Tips</h3>
+                    <h3>小贴士</h3>
                     <ul>
                       {tipItems.map(tip => (
                         <li>{tip.trim()}</li>

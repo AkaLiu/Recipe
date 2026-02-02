@@ -57,25 +57,14 @@ const { Content } = await render(recipe);
         cookTime={recipe.data.cookTime}
         bakeTime={recipe.data.bakeTime}
         coolTime={recipe.data.cookTime}
-        servings={recipe.data.servings}
+        difficulty={recipe.data.difficulty}
         robot={recipe.data.robot}
       />
     </div>
 
     <!-- Print Meta Info -->
     <div class="hidden print:flex gap-6 mb-6 text-sm text-gray-700">
-      {recipe.data.prepTime && <span><strong>准备:</strong> {recipe.data.prepTime}</span>}
-      {recipe.data.cookTime && <span><strong>烹饪:</strong> {recipe.data.cookTime}</span>}
-      {recipe.data.servings && <span><strong>份量:</strong> {recipe.data.servings}人份</span>}
-    </div>
-
-    <!-- Dish Image -->
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-      <img
-        src={recipe.data.coverImage}
-        alt={recipe.data.title}
-        class="w-full h-auto rounded-xl shadow-lg"
-      />
+      {recipe.data.difficulty && <span><strong>难度:</strong> {recipe.data.difficulty}</span>}
     </div>
 
     <!-- Recipe Content -->
@@ -88,16 +77,15 @@ const { Content } = await render(recipe);
     <!-- Action Buttons (screen only) -->
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 no-print">
       <div class="flex flex-wrap gap-4">
-        <button
-          onclick="window.print()"
-          class="px-6 py-3 bg-terracotta-600 text-white rounded-lg hover:bg-terracotta-700 transition-colors font-medium inline-flex items-center gap-2 cursor-pointer"
-          aria-label="导出 PDF"
+        <a
+          href="/Recipe"
+          class="px-6 py-3 border-2 border-terracotta-600 text-terracotta-600 rounded-lg hover:bg-terracotta-50 transition-colors font-medium inline-flex items-center gap-2"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
           </svg>
-          导出 PDF
-        </button>
+          返回主菜单
+        </a>
         <a
           href={`/Recipe/${recipe.data.category}`}
           class="px-6 py-3 border-2 border-terracotta-600 text-terracotta-600 rounded-lg hover:bg-terracotta-50 transition-colors font-medium inline-flex items-center gap-2"
@@ -108,11 +96,6 @@ const { Content } = await render(recipe);
           返回 {recipe.data.category}
         </a>
       </div>
-    </div>
-
-    <!-- Print Footer -->
-    <div class="hidden print:block mt-8 pt-4 border-t text-center text-xs text-gray-400">
-      <p>菜谱收藏 | Recipe Collection</p>
     </div>
   </article>
 </RecipeLayout>

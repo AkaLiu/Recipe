@@ -66,6 +66,15 @@ const { Content } = await render(recipe);
       {recipe.data.servings && <span><strong>份量:</strong> {recipe.data.servings}人份</span>}
     </div>
 
+    <!-- Dish Image -->
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+      <img
+        src={recipe.data.coverImage}
+        alt={recipe.data.title}
+        class="w-full h-auto rounded-xl shadow-lg"
+      />
+    </div>
+
     <!-- Recipe Content -->
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 print:p-0 print:max-w-none">
       <div class="prose prose-lg max-w-none prose-headings:text-terracotta-700 prose-headings:font-serif print:prose-headings:text-terracotta-800">

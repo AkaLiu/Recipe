@@ -5,24 +5,205 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply bg-cream-50 text-gray-800 antialiased;
+    @apply bg-linen-50 text-brown-800 antialiased;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  ::selection {
+    @apply bg-wine-100 text-wine-900;
   }
 }
 
 @layer components {
   .recipe-card {
-    @apply block bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden;
+    @apply block bg-white rounded-xl overflow-hidden
+           shadow-[0_1px_3px_rgba(61,44,44,0.06),0_1px_2px_rgba(61,44,44,0.04)]
+           hover:shadow-[0_10px_25px_rgba(61,44,44,0.08),0_4px_10px_rgba(61,44,44,0.04)]
+           transition-all duration-500 ease-out
+           hover:-translate-y-1;
   }
 
   .recipe-hero {
     @apply relative h-64 md:h-96 bg-cover bg-center;
   }
+
+  .editorial-divider {
+    @apply w-16 h-0.5 bg-copper-600 mx-auto;
+  }
+
+  .section-heading {
+    @apply font-serif font-bold text-brown-800 tracking-tight;
+  }
+
+  .section-heading::after {
+    content: '';
+    @apply block w-12 h-0.5 bg-copper-500 mt-3;
+  }
+
+  .section-heading-center::after {
+    @apply mx-auto;
+  }
+
+  .glass-nav {
+    @apply bg-white/80 backdrop-blur-lg border-b border-linen-200/50;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-6 py-3
+           bg-wine-700 text-white rounded-lg font-medium
+           hover:bg-wine-800 active:bg-wine-900
+           transition-all duration-200 ease-out
+           shadow-sm hover:shadow-md;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center gap-2 px-6 py-3
+           border-2 border-wine-700 text-wine-700 rounded-lg font-medium
+           hover:bg-wine-50 active:bg-wine-100
+           transition-all duration-200 ease-out;
+  }
+
+  .btn-copper {
+    @apply inline-flex items-center gap-2 px-6 py-3
+           bg-copper-600 text-white rounded-lg font-medium
+           hover:bg-copper-700 active:bg-copper-800
+           transition-all duration-200 ease-out
+           shadow-sm hover:shadow-md;
+  }
+
+  /* ===== Two-column recipe layout ===== */
+  .recipe-content-grid {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14;
+  }
+
+  .recipe-two-col {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 1024px) {
+    .recipe-two-col {
+      grid-template-columns: 320px 1fr;
+      gap: 3rem;
+    }
+  }
+
+  .recipe-sidebar {
+    @apply lg:sticky lg:top-24 lg:self-start;
+  }
+
+  .recipe-sidebar-inner {
+    @apply bg-linen-100 rounded-2xl p-6 border border-linen-300;
+  }
+
+  .recipe-sidebar-inner h2 {
+    @apply font-serif text-lg font-bold text-wine-700 mb-4 pb-3 border-b-2 border-copper-400;
+    letter-spacing: 0.02em;
+  }
+
+  .recipe-sidebar-inner table {
+    @apply w-full text-sm;
+  }
+
+  .recipe-sidebar-inner thead th {
+    @apply text-xs uppercase tracking-wider text-warm-gray-500 font-semibold pb-2 text-left;
+    border-bottom: none;
+  }
+
+  .recipe-sidebar-inner tbody td {
+    @apply py-2.5 border-b border-linen-200 text-brown-700;
+  }
+
+  .recipe-sidebar-inner tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .recipe-sidebar-inner tbody td:first-child {
+    @apply text-copper-700 font-medium pr-4 whitespace-nowrap;
+  }
+
+  .recipe-main-steps h2 {
+    @apply font-serif text-2xl font-bold text-wine-700 mb-6 pb-3;
+    border-bottom: 2px solid #facdd5;
+  }
+
+  .recipe-main-steps ol {
+    @apply space-y-4 list-none pl-0;
+    counter-reset: recipe-step;
+  }
+
+  .recipe-main-steps ol li {
+    @apply relative pl-12 py-3 leading-relaxed text-brown-800;
+    counter-increment: recipe-step;
+  }
+
+  .recipe-main-steps ol li::before {
+    content: counter(recipe-step);
+    @apply absolute left-0 top-3 w-8 h-8 rounded-full bg-wine-100 text-wine-700
+           flex items-center justify-center font-serif font-bold text-sm;
+  }
+
+  .recipe-tips-callout {
+    @apply mt-10 p-6 md:p-8 rounded-2xl bg-copper-50 border border-copper-200 relative;
+  }
+
+  .recipe-tips-callout::before {
+    content: '';
+    @apply absolute left-0 top-6 bottom-6 w-1 rounded-full bg-copper-500;
+  }
+
+  .recipe-tips-callout h2 {
+    @apply font-serif text-lg font-bold text-copper-800 mb-4;
+  }
+
+  .recipe-tips-callout ul {
+    @apply space-y-2 list-none pl-0;
+  }
+
+  .recipe-tips-callout ul li {
+    @apply relative pl-5 text-brown-700 leading-relaxed text-sm;
+  }
+
+  .recipe-tips-callout ul li::before {
+    content: '';
+    @apply absolute left-0 top-2.5 w-1.5 h-1.5 rounded-full bg-copper-400;
+  }
+
+  /* ===== Featured recipe card (homepage) ===== */
+  .featured-card {
+    @apply bg-white rounded-2xl overflow-hidden
+           shadow-[0_4px_20px_rgba(61,44,44,0.06)]
+           hover:shadow-[0_12px_32px_rgba(61,44,44,0.1)]
+           transition-all duration-500;
+  }
 }
 
-/* Print / PDF Export Styles - LaTeX-inspired */
+@layer utilities {
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .stagger-1 { transition-delay: 0.1s; }
+  .stagger-2 { transition-delay: 0.2s; }
+  .stagger-3 { transition-delay: 0.3s; }
+  .stagger-4 { transition-delay: 0.4s; }
+  .stagger-5 { transition-delay: 0.5s; }
+}
+
+/* Print / PDF Export Styles */
 @media print {
   @page {
     size: A4;
@@ -59,10 +240,55 @@
     margin: 0 !important;
   }
 
-  /* Typography matching LaTeX style */
+  /* Reset two-column grid for print */
+  .recipe-two-col {
+    display: block !important;
+  }
+
+  .recipe-sidebar {
+    position: static !important;
+  }
+
+  .recipe-sidebar-inner {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .recipe-tips-callout {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    border-left: 3px solid #b87333 !important;
+    padding-left: 1em !important;
+  }
+
+  .recipe-tips-callout::before {
+    display: none !important;
+  }
+
+  .recipe-main-steps ol li {
+    padding-left: 1.5em !important;
+  }
+
+  .recipe-main-steps ol li::before {
+    position: static !important;
+    display: inline !important;
+    width: auto !important;
+    height: auto !important;
+    background: none !important;
+    border-radius: 0 !important;
+    content: counter(recipe-step) ". " !important;
+    font-weight: bold !important;
+    color: #9c2541 !important;
+  }
+
+  /* Typography */
   h1 {
     font-size: 22pt !important;
-    color: #a41034 !important;
+    color: #9c2541 !important;
     font-family: Merriweather, Georgia, serif;
     margin-bottom: 0.5em !important;
     page-break-after: avoid;
@@ -70,16 +296,18 @@
 
   h2 {
     font-size: 16pt !important;
-    color: #a41034 !important;
+    color: #9c2541 !important;
     font-family: Merriweather, Georgia, serif;
     margin-top: 1.2em !important;
     margin-bottom: 0.5em !important;
     page-break-after: avoid;
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
   }
 
   h3 {
     font-size: 13pt !important;
-    color: #a41034 !important;
+    color: #9c2541 !important;
     font-family: Merriweather, Georgia, serif;
     margin-top: 1em !important;
     margin-bottom: 0.3em !important;
@@ -105,8 +333,8 @@
 
   th {
     font-weight: 600;
-    color: #a41034;
-    border-bottom: 2px solid #a41034;
+    color: #9c2541;
+    border-bottom: 2px solid #9c2541;
   }
 
   /* Lists - for steps */
@@ -165,12 +393,12 @@
   ol li::before {
     content: counter(step-counter) ". " !important;
     font-weight: bold !important;
-    color: #a41034 !important;
+    color: #9c2541 !important;
   }
 
-  /* Decorative tip box - LaTeX style */
+  /* Decorative tip box */
   .print-tip-box {
-    border-left: 3px solid #a41034 !important;
+    border-left: 3px solid #b87333 !important;
     padding-left: 1em !important;
     margin: 1em 0 !important;
     font-style: italic !important;

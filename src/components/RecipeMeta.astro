@@ -14,28 +14,55 @@ const starCount = difficulty === 'easy' ? 1 : difficulty === 'medium' ? 2 : 3;
 ---
 
 <div class="flex flex-wrap gap-3 text-sm">
+  {prepTime && (
+    <div class="flex items-center gap-2 bg-linen-100 px-3.5 py-2 rounded-lg border border-linen-300">
+      <svg class="w-4 h-4 text-copper-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span class="text-brown-700">准备: <strong class="text-brown-800">{prepTime}</strong></span>
+    </div>
+  )}
+
+  {cookTime && (
+    <div class="flex items-center gap-2 bg-linen-100 px-3.5 py-2 rounded-lg border border-linen-300">
+      <svg class="w-4 h-4 text-copper-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+      </svg>
+      <span class="text-brown-700">烹饪: <strong class="text-brown-800">{cookTime}</strong></span>
+    </div>
+  )}
+
   {bakeTime && (
-    <div class="flex items-center gap-2 bg-sage-50 px-3 py-2 rounded-lg border border-sage-100">
-      <svg class="w-5 h-5 text-sage-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="flex items-center gap-2 bg-copper-50 px-3.5 py-2 rounded-lg border border-copper-200">
+      <svg class="w-4 h-4 text-copper-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
       </svg>
-      <span class="text-gray-700">烘烤: <strong>{bakeTime}</strong></span>
+      <span class="text-brown-700">烘烤: <strong class="text-brown-800">{bakeTime}</strong></span>
+    </div>
+  )}
+
+  {coolTime && (
+    <div class="flex items-center gap-2 bg-linen-100 px-3.5 py-2 rounded-lg border border-linen-300">
+      <svg class="w-4 h-4 text-copper-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+      </svg>
+      <span class="text-brown-700">冷却: <strong class="text-brown-800">{coolTime}</strong></span>
     </div>
   )}
 
   {difficulty && (
-    <div class="flex items-center gap-2 bg-cream-100 px-3 py-2 rounded-lg border border-cream-200">
-      <svg class="w-5 h-5 text-terracotta-600" fill="currentColor" viewBox="0 0 24 24">
+    <div class="flex items-center gap-2 bg-wine-50 px-3.5 py-2 rounded-lg border border-wine-200">
+      <svg class="w-4 h-4 text-wine-600" fill="currentColor" viewBox="0 0 24 24">
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
       </svg>
-      <span class="text-gray-700">难度: <strong>{'★'.repeat(starCount)}</strong></span>
+      <span class="text-brown-700">难度: <strong class="text-wine-700">{'★'.repeat(starCount)}{'☆'.repeat(3 - starCount)}</strong></span>
     </div>
   )}
 
   {robot && (
-    <div class="flex items-center gap-2 bg-purple-50 px-3 py-2 rounded-lg border border-purple-100">
-      <span class="text-lg">🤖</span>
-      <span class="text-gray-700">{robot}</span>
+    <div class="flex items-center gap-2 bg-warm-gray-50 px-3.5 py-2 rounded-lg border border-warm-gray-200">
+      <span class="text-base">🤖</span>
+      <span class="text-brown-700">{robot}</span>
     </div>
   )}
 </div>

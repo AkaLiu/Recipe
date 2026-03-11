@@ -6,7 +6,6 @@ import RecipeMeta from '../../components/RecipeMeta.astro';
 export async function getStaticPaths() {
   const recipes = await getCollection('recipes');
   return recipes.map((recipe) => {
-    // Extract slug from filename (keeps Chinese characters)
     const id = recipe.id;
     const slug = id.replace(/\.mdx?$/, '').split('/').pop() || '';
     return {
@@ -21,6 +20,7 @@ export async function getStaticPaths() {
 
 const { recipe } = Astro.props;
 const { Content } = await render(recipe);
+const recipeId = recipe.id.replace(/\.mdx?$/, '');
 ---
 
 <RecipeLayout
@@ -29,37 +29,63 @@ const { Content } = await render(recipe);
 >
   <!-- Hero Section with Cover Image (hidden in print) -->
   <div
-    class="relative h-80 md:h-[28rem] bg-cover bg-center no-print"
+    class="relative h-80 md:h-[32rem] bg-cover bg-center no-print"
     style={`background-image: url('${recipe.data.coverImage}')`}
   >
-    <div class="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60"></div>
-    <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-4">
-      <span class="bg-terracotta-600/90 px-4 py-1.5 rounded-full text-sm mb-4 backdrop-blur-sm">{recipe.data.category}</span>
-      <h1 class="text-4xl md:text-5xl font-serif font-bold text-center drop-shadow-lg">{recipe.data.title}</h1>
-      {recipe.data.titleEn && <p class="text-xl md:text-2xl mt-3 text-white/90 drop-shadow">{recipe.data.titleEn}</p>}
+    <div class="absolute inset-0 bg-gradient-to-b from-brown-900/40 via-brown-900/20 to-brown-900/70"></div>
+    <div class="absolute inset-0 flex flex-col items-center justify-end pb-12 md:pb-16 text-white p-4">
+      <nav class="absolute top-6 left-6 flex items-center gap-2 text-sm text-white/70">
+        <a href="/Recipe" class="hover:text-white transition-colors">首页</a>
+        <span>/</span>
+        <a href={`/Recipe/${recipe.data.category}`} class="hover:text-white transition-colors">{recipe.data.category}</a>
+      </nav>
+
+      <span class="px-4 py-1.5 text-xs font-medium tracking-wider uppercase
+                    bg-wine-700/80 text-white rounded-full backdrop-blur-sm mb-5
+                    border border-white/10">
+        {recipe.data.category}
+      </span>
+      <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center drop-shadow-lg leading-tight">
+        {recipe.data.title}
+      </h1>
+      {recipe.data.titleEn && (
+        <p class="text-lg md:text-xl mt-3 text-white/80 drop-shadow font-serif italic">
+          {recipe.data.titleEn}
+        </p>
+      )}
     </div>
   </div>
 
   <article class="print:w-full print:p-0">
     <!-- Print Header -->
-    <header class="hidden print:block mb-6 border-b-2 border-terracotta-600 pb-4">
+    <header class="hidden print:block mb-6 border-b-2 border-wine-700 pb-4">
       <div class="flex justify-between items-baseline">
-        <h1 class="text-3xl font-bold text-terracotta-800 font-serif">{recipe.data.title}</h1>
+        <h1 class="text-3xl font-bold text-wine-800 font-serif">{recipe.data.title}</h1>
         {recipe.data.titleEn && <span class="text-lg text-gray-500">{recipe.data.titleEn}</span>}
       </div>
       <p class="text-sm text-gray-600 mt-1">{recipe.data.category}</p>
     </header>
 
-    <!-- Meta Info (screen only) -->
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 no-print">
-      <RecipeMeta
-        prepTime={recipe.data.prepTime}
-        cookTime={recipe.data.cookTime}
-        bakeTime={recipe.data.bakeTime}
-        coolTime={recipe.data.cookTime}
-        difficulty={recipe.data.difficulty}
-        robot={recipe.data.robot}
-      />
+    <!-- Meta Info (screen only) - overlapping hero -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-10 no-print">
+      <div class="bg-white rounded-xl shadow-lg p-6 border border-linen-200">
+        <RecipeMeta
+          prepTime={recipe.data.prepTime}
+          cookTime={recipe.data.cookTime}
+          bakeTime={recipe.data.bakeTime}
+          coolTime={recipe.data.coolTime}
+          difficulty={recipe.data.difficulty}
+          robot={recipe.data.robot}
+        />
+        <div class="border-t border-linen-200 mt-4 pt-4 flex justify-center">
+          <button id="like-btn" data-recipe-id={recipeId} class="flex items-center gap-2 text-warm-gray-400 hover:text-wine-700 transition-colors duration-200">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path class="heart-path" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+            </svg>
+            <span id="like-label" class="text-sm font-medium">收藏</span>
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Print Meta Info -->
@@ -67,35 +93,182 @@ const { Content } = await render(recipe);
       {recipe.data.difficulty && <span><strong>难度:</strong> {recipe.data.difficulty}</span>}
     </div>
 
-    <!-- Recipe Content -->
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 print:p-0 print:max-w-none">
-      <div class="prose prose-lg max-w-none prose-headings:text-terracotta-700 prose-headings:font-serif print:prose-headings:text-terracotta-800">
+    <!-- Recipe Content: restructured by client script into two-column layout -->
+    <div class="recipe-content-grid print:p-0 print:max-w-none">
+      <div id="recipe-prose" class="prose prose-lg max-w-none
+                  prose-headings:text-wine-700 prose-headings:font-serif
+                  prose-p:text-brown-800 prose-p:leading-relaxed
+                  prose-li:text-brown-800
+                  prose-strong:text-brown-900
+                  prose-table:my-0
+                  print:prose-headings:text-wine-800">
         <Content />
       </div>
     </div>
 
     <!-- Action Buttons (screen only) -->
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 no-print">
-      <div class="flex flex-wrap gap-4">
-        <a
-          href="/Recipe"
-          class="px-6 py-3 border-2 border-terracotta-600 text-terracotta-600 rounded-lg hover:bg-terracotta-50 transition-colors font-medium inline-flex items-center gap-2"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-          </svg>
-          返回主菜单
-        </a>
-        <a
-          href={`/Recipe/${recipe.data.category}`}
-          class="px-6 py-3 border-2 border-terracotta-600 text-terracotta-600 rounded-lg hover:bg-terracotta-50 transition-colors font-medium inline-flex items-center gap-2"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          返回 {recipe.data.category}
-        </a>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 no-print">
+      <div class="border-t border-linen-200 pt-8">
+        <div class="flex flex-wrap gap-4">
+          <a href="/Recipe" class="btn-outline">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            返回主菜单
+          </a>
+          <a href={`/Recipe/${recipe.data.category}`} class="btn-outline">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            返回 {recipe.data.category}
+          </a>
+          <button
+            onclick="window.print()"
+            class="btn-copper ml-auto"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            导出 PDF
+          </button>
+        </div>
       </div>
     </div>
   </article>
 </RecipeLayout>
+
+<script>
+  // Restructure MDX prose content into a two-column layout:
+  // Left sidebar: ingredients table
+  // Right main: steps
+  // Full-width bottom: tips callout
+  function restructureRecipe() {
+    const prose = document.getElementById('recipe-prose');
+    if (!prose) return;
+
+    const headings = prose.querySelectorAll('h2');
+    if (headings.length === 0) return;
+
+    // Collect sections: each h2 and all siblings until the next h2
+    const sections: { heading: Element; content: Element[] }[] = [];
+    headings.forEach((h2) => {
+      const content: Element[] = [];
+      let next = h2.nextElementSibling;
+      while (next && next.tagName !== 'H2') {
+        content.push(next);
+        next = next.nextElementSibling;
+      }
+      sections.push({ heading: h2, content });
+    });
+
+    // Identify sections by heading text
+    let ingredientSection: { heading: Element; content: Element[] } | null = null;
+    let stepsSection: { heading: Element; content: Element[] } | null = null;
+    let tipsSection: { heading: Element; content: Element[] } | null = null;
+
+    sections.forEach((sec) => {
+      const text = sec.heading.textContent || '';
+      if (text.includes('食材')) ingredientSection = sec;
+      else if (text.includes('步骤')) stepsSection = sec;
+      else if (text.includes('小贴士')) tipsSection = sec;
+    });
+
+    if (!ingredientSection && !stepsSection) return;
+
+    // Clear prose container
+    prose.innerHTML = '';
+    prose.classList.remove('prose', 'prose-lg');
+
+    // Build two-column grid
+    const grid = document.createElement('div');
+    grid.className = 'recipe-two-col';
+
+    // Sidebar: ingredients
+    if (ingredientSection) {
+      const sidebar = document.createElement('div');
+      sidebar.className = 'recipe-sidebar';
+      const inner = document.createElement('div');
+      inner.className = 'recipe-sidebar-inner';
+      inner.appendChild(ingredientSection.heading);
+      ingredientSection.content.forEach((el) => inner.appendChild(el));
+      sidebar.appendChild(inner);
+      grid.appendChild(sidebar);
+    }
+
+    // Main: steps
+    if (stepsSection) {
+      const main = document.createElement('div');
+      main.className = 'recipe-main-steps';
+      main.appendChild(stepsSection.heading);
+      stepsSection.content.forEach((el) => main.appendChild(el));
+      grid.appendChild(main);
+    }
+
+    prose.appendChild(grid);
+
+    // Tips callout: full width below the grid
+    if (tipsSection) {
+      const callout = document.createElement('div');
+      callout.className = 'recipe-tips-callout';
+      callout.appendChild(tipsSection.heading);
+      tipsSection.content.forEach((el) => callout.appendChild(el));
+      prose.appendChild(callout);
+    }
+  }
+
+  // Only restructure on screens wide enough for two columns
+  if (window.innerWidth >= 1024) {
+    restructureRecipe();
+  }
+</script>
+
+<script>
+  // Like/favorites functionality
+  const likeBtn = document.getElementById('like-btn');
+  const likeLabel = document.getElementById('like-label');
+
+  if (likeBtn && likeLabel) {
+    const recipeId = likeBtn.dataset.recipeId || '';
+    const STORAGE_KEY = 'recipe-likes';
+
+    function getLikes(): string[] {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      } catch { return []; }
+    }
+
+    function isLiked(): boolean {
+      return getLikes().includes(recipeId);
+    }
+
+    function updateUI() {
+      const liked = isLiked();
+      const heartPath = likeBtn!.querySelector('.heart-path');
+      if (liked) {
+        heartPath?.setAttribute('fill', 'currentColor');
+        likeBtn!.classList.add('text-wine-700');
+        likeBtn!.classList.remove('text-warm-gray-400');
+        likeLabel!.textContent = '已收藏';
+      } else {
+        heartPath?.setAttribute('fill', 'none');
+        likeBtn!.classList.remove('text-wine-700');
+        likeBtn!.classList.add('text-warm-gray-400');
+        likeLabel!.textContent = '收藏';
+      }
+    }
+
+    likeBtn.addEventListener('click', () => {
+      const likes = getLikes();
+      const idx = likes.indexOf(recipeId);
+      if (idx >= 0) {
+        likes.splice(idx, 1);
+      } else {
+        likes.push(recipeId);
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(likes));
+      updateUI();
+    });
+
+    updateUI();
+  }
+</script>

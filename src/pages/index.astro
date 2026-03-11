@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '../layouts/BaseLayout.astro';
+import RecipeLayout from '../layouts/RecipeLayout.astro';
 import RecipeCard from '../components/RecipeCard.astro';
 
 const allRecipes = await getCollection('recipes');
@@ -35,35 +35,40 @@ const categories = [
 const totalRecipes = allRecipes.length;
 ---
 
-<BaseLayout title="菜谱收藏 | Recipe Collection">
+<RecipeLayout title="菜谱收藏 | Recipe Collection">
   <!-- Hero Section -->
-  <section class="relative bg-gradient-to-br from-terracotta-600 to-terracotta-800 text-white py-20 md:py-32">
-    <div class="absolute inset-0 bg-[url('/Recipe/images/backgrounds/pattern.svg')] opacity-10"></div>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
-      <h1 class="text-4xl md:text-6xl font-serif font-bold mb-4">
+  <section class="relative bg-gradient-to-b from-linen-100 via-linen-50 to-linen-50 py-20 md:py-32 lg:py-40 overflow-hidden">
+    <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-copper-400 to-transparent"></div>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+      <div class="flex items-center justify-center gap-3 mb-8 animate-fade-in" style="opacity:0">
+        <span class="w-8 h-px bg-copper-400"></span>
+        <span class="text-copper-600 text-sm font-medium tracking-[0.2em] uppercase">Recipe Collection</span>
+        <span class="w-8 h-px bg-copper-400"></span>
+      </div>
+
+      <h1 class="font-display text-5xl md:text-7xl lg:text-8xl font-bold text-brown-800 tracking-tight leading-[0.95] mb-6 animate-fade-in-up" style="opacity:0">
         菜谱收藏
       </h1>
-      <p class="text-xl md:text-2xl text-white/80 mb-8">
-        A personal collection of recipes
+
+      <p class="text-lg md:text-xl text-warm-gray-500 max-w-lg mx-auto mb-10 leading-relaxed font-light animate-fade-in-delay-1" style="opacity:0">
+        A personal journey through Chinese and international cuisines,
+        one recipe at a time.
       </p>
-      <p class="text-white/60 mb-8">
-        {totalRecipes} recipes from various cuisines
+
+      <p class="text-sm text-warm-gray-400 mb-10 animate-fade-in-delay-2" style="opacity:0">
+        {totalRecipes} recipes &middot; {categories.length} cuisines
       </p>
-      <div class="flex flex-wrap justify-center gap-4">
-        <a
-          href="#categories"
-          class="inline-flex items-center gap-2 px-6 py-3 bg-white text-terracotta-700 rounded-lg font-medium hover:bg-cream-50 transition-colors"
-        >
-          浏览菜系
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+      <div class="flex flex-wrap justify-center gap-4 animate-fade-in-delay-3" style="opacity:0">
+        <a href="#featured" class="btn-primary">
+          浏览菜谱
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
           </svg>
         </a>
-        <a
-          href="/Recipe/book"
-          class="inline-flex items-center gap-2 px-6 py-3 border-2 border-white text-white rounded-lg font-medium hover:bg-white/10 transition-colors"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <a href="/Recipe/book" class="btn-outline">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           导出 PDF 全书
@@ -72,66 +77,139 @@ const totalRecipes = allRecipes.length;
     </div>
   </section>
 
-  <!-- Categories Section -->
-  <section id="categories" class="py-16 md:py-24">
+  <!-- Favorites Section -->
+  <section id="featured" class="py-16 md:py-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-3xl font-serif font-bold text-center text-gray-900 mb-12">
-        菜系分类
-      </h2>
-
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {categories.map((cat) => (
-          <a
-            href={`/Recipe/${cat.name}`}
-            class="group flex flex-col items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1"
-          >
-            <span class="text-4xl mb-3">{cat.emoji}</span>
-            <span class="font-semibold text-gray-900 group-hover:text-terracotta-600 transition-colors">
-              {cat.label}
-            </span>
-            <span class="text-sm text-gray-500 mt-1">
-              {recipesByCategory[cat.name]?.length || 0} 道菜
-            </span>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Recent Recipes Section -->
-  <section class="py-16 md:py-24 bg-cream-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center mb-12">
-        <h2 class="text-3xl font-serif font-bold text-gray-900">
-          全部菜谱
+      <div class="text-center mb-12">
+        <h2 class="section-heading section-heading-center text-2xl md:text-3xl">
+          <span class="inline-flex items-center gap-2">
+            <svg class="w-6 h-6 text-wine-700" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+            </svg>
+            精选菜谱
+          </span>
         </h2>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {allRecipes.slice(0, 12).map((recipe) => (
-          <RecipeCard
-            title={recipe.data.title}
-            titleEn={recipe.data.titleEn}
-            category={recipe.data.category}
-            prepTime={recipe.data.prepTime}
-            cookTime={recipe.data.cookTime}
-            servings={recipe.data.servings}
-            coverImage={recipe.data.coverImage}
-            id={recipe.id}
-          />
-        ))}
+      <!-- Fallback message (shown when no likes) -->
+      <div id="favorites-empty" class="text-center py-12 text-warm-gray-400">
+        <svg class="w-12 h-12 mx-auto mb-4 text-warm-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+        </svg>
+        <p class="text-lg">浏览菜谱并点击收藏，你的精选菜谱将在这里出现</p>
       </div>
 
-      {allRecipes.length > 12 && (
-        <div class="text-center mt-12">
-          <a
-            href="/Recipe/川"
-            class="px-6 py-3 border-2 border-terracotta-600 text-terracotta-600 rounded-lg hover:bg-terracotta-50 transition-colors font-medium inline-flex items-center gap-2"
-          >
-            查看更多菜谱
-          </a>
-        </div>
-      )}
+      <!-- Favorites grid (cards hidden by default, shown via JS) -->
+      <div id="favorites-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        {allRecipes.map((recipe) => {
+          const rid = recipe.id.replace(/\.mdx?$/, '');
+          return (
+            <div class="animate-on-scroll" data-recipe-id={rid} hidden>
+              <RecipeCard
+                title={recipe.data.title}
+                titleEn={recipe.data.titleEn}
+                category={recipe.data.category}
+                prepTime={recipe.data.prepTime}
+                cookTime={recipe.data.cookTime}
+                servings={recipe.data.servings}
+                coverImage={recipe.data.coverImage}
+                id={recipe.id}
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   </section>
-</BaseLayout>
+
+  <!-- Categories Section -->
+  <section id="categories" class="py-16 md:py-24 bg-linen-100/50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="section-heading section-heading-center text-2xl md:text-3xl">
+          菜系分类
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+        {categories.map((cat) => (
+          <a
+            href={`/Recipe/${cat.name}`}
+            class="animate-on-scroll group relative flex flex-col items-center p-6 md:p-8
+                   bg-white rounded-xl
+                   shadow-[0_1px_3px_rgba(61,44,44,0.04)]
+                   hover:shadow-[0_8px_20px_rgba(61,44,44,0.07)]
+                   transition-all duration-500 hover:-translate-y-1
+                   border border-linen-200 hover:border-copper-300"
+          >
+            <span class="text-3xl md:text-4xl mb-3">{cat.emoji}</span>
+            <span class="font-serif font-bold text-brown-800 group-hover:text-wine-700 transition-colors duration-300">
+              {cat.label}
+            </span>
+            <span class="text-xs text-warm-gray-400 mt-1.5 tracking-wide">
+              {recipesByCategory[cat.name]?.length || 0} 道菜
+            </span>
+            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 group-hover:w-8 h-0.5 bg-copper-500 rounded-full transition-all duration-500 ease-out"></div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- More Recipes Grid -->
+  <section class="py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="section-heading section-heading-center text-2xl md:text-3xl">
+          更多菜谱
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        {allRecipes.map((recipe) => (
+          <div class="animate-on-scroll">
+            <RecipeCard
+              title={recipe.data.title}
+              titleEn={recipe.data.titleEn}
+              category={recipe.data.category}
+              prepTime={recipe.data.prepTime}
+              cookTime={recipe.data.cookTime}
+              servings={recipe.data.servings}
+              coverImage={recipe.data.coverImage}
+              id={recipe.id}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</RecipeLayout>
+
+<script>
+  // Favorites: show liked recipes on homepage
+  const STORAGE_KEY = 'recipe-likes';
+  const grid = document.getElementById('favorites-grid');
+  const empty = document.getElementById('favorites-empty');
+
+  if (grid && empty) {
+    function getLikes(): string[] {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      } catch { return []; }
+    }
+
+    const likes = getLikes();
+    let shown = 0;
+
+    grid.querySelectorAll<HTMLElement>('[data-recipe-id]').forEach((card) => {
+      if (likes.includes(card.dataset.recipeId || '')) {
+        card.removeAttribute('hidden');
+        shown++;
+      }
+    });
+
+    if (shown > 0) {
+      empty.hidden = true;
+    }
+  }
+</script>

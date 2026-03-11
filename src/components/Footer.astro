@@ -14,34 +14,34 @@ const categories = [
 ];
 ---
 
-<footer class="bg-gray-50 border-t no-print">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-      <div class="col-span-2 md:col-span-1">
-        <div class="flex items-center gap-2 mb-4">
-          <span class="text-2xl">🍳</span>
-          <span class="text-xl font-serif font-bold text-terracotta-800">菜谱</span>
-        </div>
-        <p class="text-sm text-gray-500">
-          A personal collection of recipes from various Chinese and international cuisines.
-        </p>
-      </div>
+<footer class="bg-linen-100 border-t border-linen-300 no-print">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center mb-10">
+      <a href="/Recipe" class="inline-flex items-center gap-2.5 mb-3">
+        <span class="text-2xl">🍳</span>
+        <span class="font-display text-2xl font-bold text-wine-800 tracking-tight">菜谱收藏</span>
+      </a>
+      <p class="text-warm-gray-500 text-sm max-w-md mx-auto leading-relaxed">
+        A personal collection of recipes from Chinese and international cuisines,
+        crafted with care and shared with love.
+      </p>
+    </div>
 
+    <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10">
       {categories.map((cat) => (
-        <div>
-          <h3 class="font-semibold text-gray-900 mb-2">{cat.label}</h3>
-          <a
-            href={`/recipes/${cat.name}`}
-            class="text-sm text-gray-500 hover:text-terracotta-600 transition-colors"
-          >
-            浏览菜谱
-          </a>
-        </div>
+        <a
+          href={`/Recipe/${cat.name}`}
+          class="text-sm text-warm-gray-500 hover:text-wine-700 transition-colors duration-200"
+        >
+          {cat.label}
+        </a>
       ))}
     </div>
 
-    <div class="border-t mt-8 pt-8 text-center text-sm text-gray-500">
-      <p>&copy; {new Date().getFullYear()} Recipe Collection. Built with Astro.</p>
-    </div>
+    <div class="editorial-divider mb-8"></div>
+
+    <p class="text-center text-xs text-warm-gray-400 tracking-wide">
+      &copy; {new Date().getFullYear()} Recipe Collection &middot; Built with Astro
+    </p>
   </div>
 </footer>

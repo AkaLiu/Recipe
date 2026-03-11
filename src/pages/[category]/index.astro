@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import RecipeLayout from '../../layouts/RecipeLayout.astro';
 import RecipeCard from '../../components/RecipeCard.astro';
 
 export async function getStaticPaths() {
@@ -28,45 +28,80 @@ const categoryLabels: Record<string, string> = {
   'Desserts': '甜点',
   'Drinks': '饮品',
 };
+
+const categoryDescriptions: Record<string, string> = {
+  '鲁': 'The refined cuisine of Shandong, master of seafood and clear broths',
+  '川': 'Bold Sichuan flavors, the art of mala and complex spice',
+  '粤闽': 'Cantonese and Fujian traditions of freshness and subtlety',
+  '淮扬': 'Huaiyang elegance, precise knife skills and delicate tastes',
+  '徽湘': 'Anhui and Hunan home cooking, earthy and fragrant',
+  '云贵': 'Yunnan and Guizhou, sour-spicy mountain flavors',
+  '意法': 'Italian and French classics, Mediterranean warmth',
+  '南洋': 'Southeast Asian vibrancy, tropical aromatics',
+  'Silk-Road': 'Silk Road inspirations, where East meets West',
+  'Desserts': 'Sweet endings and pastry creations',
+  'Drinks': 'Beverages and refreshments',
+};
 ---
 
-<BaseLayout title={`${categoryLabels[category]} | 菜谱`}>
-  <section class="bg-terracotta-600 text-white py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4">
+<RecipeLayout title={`${categoryLabels[category]} | 菜谱`}>
+  <!-- Category Header -->
+  <section class="bg-gradient-to-b from-linen-100 to-linen-50 py-16 md:py-24 border-b border-linen-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <nav class="flex justify-center items-center gap-2 text-sm text-warm-gray-400 mb-8">
+        <a href="/Recipe" class="hover:text-wine-700 transition-colors">首页</a>
+        <span>/</span>
+        <span class="text-brown-800 font-medium">{categoryLabels[category]}</span>
+      </nav>
+
+      <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-brown-800 tracking-tight mb-4">
         {categoryLabels[category]}
       </h1>
-      <p class="text-white/80">
+      <p class="text-warm-gray-500 max-w-md mx-auto mb-4 italic font-serif">
+        {categoryDescriptions[category]}
+      </p>
+      <p class="text-sm text-warm-gray-400">
         {categoryRecipes.length} 道菜谱
       </p>
     </div>
   </section>
 
-  <section class="py-12 md:py-16">
+  <!-- Recipe Grid -->
+  <section class="py-14 md:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {categoryRecipes.length > 0 ? (
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {categoryRecipes.map((recipe) => (
-            <RecipeCard
-              title={recipe.data.title}
-              titleEn={recipe.data.titleEn}
-              category={recipe.data.category}
-              prepTime={recipe.data.prepTime}
-              cookTime={recipe.data.cookTime}
-              servings={recipe.data.servings}
-              coverImage={recipe.data.coverImage}
-              id={recipe.id}
-            />
+            <div class="animate-on-scroll">
+              <RecipeCard
+                title={recipe.data.title}
+                titleEn={recipe.data.titleEn}
+                category={recipe.data.category}
+                prepTime={recipe.data.prepTime}
+                cookTime={recipe.data.cookTime}
+                servings={recipe.data.servings}
+                coverImage={recipe.data.coverImage}
+                id={recipe.id}
+              />
+            </div>
           ))}
         </div>
       ) : (
-        <div class="text-center py-12">
-          <p class="text-gray-500 mb-4">暂无菜谱</p>
-          <a href="/" class="px-6 py-3 bg-terracotta-600 text-white rounded-lg hover:bg-terracotta-700 transition-colors font-medium inline-flex items-center gap-2">
+        <div class="text-center py-20 max-w-md mx-auto">
+          <div class="w-16 h-16 rounded-full bg-linen-200 flex items-center justify-center mx-auto mb-6">
+            <svg class="w-8 h-8 text-warm-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          </div>
+          <h3 class="font-serif text-xl font-bold text-brown-800 mb-2">暂无菜谱</h3>
+          <p class="text-warm-gray-500 text-sm mb-8 leading-relaxed">
+            This collection is still growing. Check back soon for new recipes.
+          </p>
+          <a href="/Recipe" class="btn-primary">
             返回首页
           </a>
         </div>
       )}
     </div>
   </section>
-</BaseLayout>
+</RecipeLayout>

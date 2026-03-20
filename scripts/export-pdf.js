@@ -1,16 +1,18 @@
+import { spawn } from 'node:child_process';
 import { createServer } from 'node:http';
-import { copyFile, mkdir, readFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import process from 'node:process';
-import { chromium } from 'playwright';
 
 const DIST_DIR = join(process.cwd(), 'dist');
 const PUBLIC_DIR = join(process.cwd(), 'public');
 const HOST = '127.0.0.1';
 const PORT = 4173;
-const BOOK_PATH = '/book/';
+const BASE_PATH = '/Recipe';
+const BOOK_PATH = `${BASE_PATH}/book/`;
 const DIST_OUTPUT_PATH = join(DIST_DIR, 'recipe-collection.pdf');
 const PUBLIC_OUTPUT_PATH = join(PUBLIC_DIR, 'recipe-collection.pdf');
+const PAGED_STYLE_PATH = join(process.cwd(), '.pagedjs-export.css');
 
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
@@ -23,10 +25,12 @@ const mimeTypes = {
   '.jpeg': 'image/jpeg',
   '.webp': 'image/webp',
   '.ico': 'image/x-icon',
+  '.pdf': 'application/pdf',
 };
 
 function resolveFilePath(urlPath) {
-  const safePath = normalize(decodeURIComponent(urlPath)).replace(/^(\.\.[/\\])+/, '');
+  const strippedPath = urlPath.startsWith(BASE_PATH) ? urlPath.slice(BASE_PATH.length) || '/' : urlPath;
+  const safePath = normalize(decodeURIComponent(strippedPath)).replace(/^(\.\.[/\\])+/, '');
   let filePath = join(DIST_DIR, safePath);
   if (safePath.endsWith('/')) filePath = join(DIST_DIR, safePath, 'index.html');
   if (!extname(filePath)) filePath = `${filePath}.html`;
@@ -57,51 +61,55 @@ async function startServer() {
   return server;
 }
 
+async function runPagedCli() {
+  await writeFile(
+    PAGED_STYLE_PATH,
+    'body { padding: 0 !important; } .page { box-shadow: none !important; } .print-btn { display: none !important; }',
+    'utf8'
+  );
+
+  return new Promise((resolve, reject) => {
+    const child = spawn(
+      'npx',
+      [
+        'pagedjs-cli',
+        `http://${HOST}:${PORT}${BOOK_PATH}`,
+        '--output',
+        PUBLIC_OUTPUT_PATH,
+        '--media',
+        'screen',
+        '--timeout',
+        '120000',
+        '--style',
+        PAGED_STYLE_PATH,
+        '--browserArgs',
+        '--no-sandbox',
+      ],
+      {
+        cwd: process.cwd(),
+        stdio: 'inherit',
+        env: process.env,
+      }
+    );
+
+    child.on('exit', (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(`pagedjs-cli exited with code ${code}`));
+    });
+    child.on('error', reject);
+  });
+}
+
 async function main() {
+  await mkdir(PUBLIC_DIR, { recursive: true });
   const server = await startServer();
-  const browser = await chromium.launch();
 
   try {
-    const page = await browser.newPage();
-    await page.goto(`http://${HOST}:${PORT}${BOOK_PATH}`, { waitUntil: 'networkidle' });
-    await page.evaluate(async () => {
-      if (document.fonts?.ready) {
-        await document.fonts.ready;
-      }
-
-      const images = Array.from(document.images || []);
-      await Promise.all(
-        images.map((img) => {
-          if (img.complete) return Promise.resolve();
-          return new Promise((resolve) => {
-            img.addEventListener('load', resolve, { once: true });
-            img.addEventListener('error', resolve, { once: true });
-          });
-        })
-      );
-    });
-    await page.emulateMedia({ media: 'screen' });
-    await page.addStyleTag({
-      content: 'body { padding: 0 !important; } .page { box-shadow: none !important; } .print-btn { display: none !important; }',
-    });
-    await mkdir(PUBLIC_DIR, { recursive: true });
-    await page.pdf({
-      path: PUBLIC_OUTPUT_PATH,
-      format: 'A4',
-      printBackground: true,
-      preferCSSPageSize: true,
-      margin: {
-        top: '0',
-        right: '0',
-        bottom: '0',
-        left: '0',
-      },
-    });
+    await runPagedCli();
     await copyFile(PUBLIC_OUTPUT_PATH, DIST_OUTPUT_PATH);
     console.log(`PDF written to ${PUBLIC_OUTPUT_PATH}`);
     console.log(`PDF copied to ${DIST_OUTPUT_PATH}`);
   } finally {
-    await browser.close();
     await new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
   }
 }

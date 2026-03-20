@@ -7,6 +7,7 @@
 
 const fs = require('fs/promises');
 const path = require('path');
+const { spawn } = require('child_process');
 
 const template = `---
 title: {TITLE}
@@ -55,6 +56,17 @@ async function createRecipe(category, title) {
 
   await fs.writeFile(filePath, content);
   console.log(`✓ Created: ${filePath}`);
+  console.log('Running single-page layout budget check...');
+
+  await new Promise((resolve) => {
+    const child = spawn('node', ['scripts/check-recipe-layout.js', filePath], {
+      stdio: 'inherit',
+      cwd: process.cwd(),
+    });
+
+    child.on('exit', () => resolve());
+    child.on('error', () => resolve());
+  });
 }
 
 const args = process.argv.slice(2);

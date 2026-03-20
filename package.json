@@ -8,6 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "check:recipe-layout": "node scripts/check-recipe-layout.js",
     "pdf:book": "node scripts/export-pdf.js",
     "export:book": "npm run build && npm run pdf:book"
   },
@@ -21,6 +22,8 @@
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
+    "pagedjs": "^0.4.3",
+    "pagedjs-cli": "^0.4.3",
     "playwright": "^1.58.2",
     "typescript": "^5.3.0"
   }

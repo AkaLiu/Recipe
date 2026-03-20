@@ -219,6 +219,7 @@ const spotlightRecipe = allRecipes[0];
       const delta = event.clientX - startX;
       if (Math.abs(delta) > 6) {
         dragged = true;
+        grid.classList.add('is-dragging');
       }
       grid.scrollLeft = startScrollLeft - delta;
     }
@@ -237,7 +238,6 @@ const spotlightRecipe = allRecipes[0];
       dragged = false;
       startX = event.clientX;
       startScrollLeft = grid.scrollLeft;
-      grid.classList.add('is-dragging');
     });
 
     grid.addEventListener('pointermove', handlePointerMove);

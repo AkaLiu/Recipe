@@ -3,12 +3,19 @@ export interface RecipeTableRow {
   ingredient: string;
 }
 
+export interface RecipeIngredientGroup {
+  title?: string;
+  titleEn?: string;
+  rows: RecipeTableRow[];
+}
+
 export interface RecipeExtraSection {
   title: string;
   items: string[];
 }
 
 export interface ParsedRecipeBody {
+  ingredientGroups: RecipeIngredientGroup[];
   ingredientRows: RecipeTableRow[];
   stepItems: string[];
   tipItems: string[];
@@ -44,6 +51,32 @@ function parseTableRows(sectionBody: string): RecipeTableRow[] {
     .map((cells) => ({ amount: cells[0], ingredient: cells[1] }));
 }
 
+function parseIngredientGroups(sectionBody: string): RecipeIngredientGroup[] {
+  const subgroupMatches = [...sectionBody.matchAll(/^###\s+(.+)$/gm)];
+
+  if (!subgroupMatches.length) {
+    const rows = parseTableRows(sectionBody);
+    return rows.length ? [{ rows }] : [];
+  }
+
+  return subgroupMatches
+    .map((match, index) => {
+      const fullHeading = match[1].trim();
+      const start = match.index! + match[0].length;
+      const end = index + 1 < subgroupMatches.length ? subgroupMatches[index + 1].index! : sectionBody.length;
+      const content = sectionBody.slice(start, end).trim();
+      const rows = parseTableRows(content);
+      const [title, titleEn] = fullHeading.split('|').map((part) => part?.trim()).filter(Boolean);
+
+      return {
+        title,
+        titleEn,
+        rows,
+      };
+    })
+    .filter((group) => group.rows.length > 0);
+}
+
 function parseListItems(sectionBody: string): string[] {
   return sectionBody
     .split(/\n(?:\d+\.\s+|-\s+)/)
@@ -63,8 +96,12 @@ export function parseRecipeBody(body: string): ParsedRecipeBody {
       !section.heading.includes('小贴士')
   );
 
+  const ingredientGroups = ingredients ? parseIngredientGroups(ingredients.content) : [];
+  const ingredientRows = ingredientGroups.flatMap((group) => group.rows);
+
   return {
-    ingredientRows: ingredients ? parseTableRows(ingredients.content) : [],
+    ingredientGroups,
+    ingredientRows,
     stepItems: steps ? parseListItems(steps.content) : [],
     tipItems: tips ? parseListItems(tips.content) : [],
     extras: extras.map((section) => ({

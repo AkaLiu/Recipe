@@ -20,7 +20,7 @@ const currentPath = Astro.url.pathname;
   <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="h-16 lg:h-[4.75rem] grid grid-cols-[1fr_auto_1fr] items-center gap-3">
       <div class="hidden lg:flex items-center gap-5 justify-start">
-        <a href="/Recipe/book" class="nav-utility-link">
+        <a href="/Recipe/book" class="nav-utility-link nav-utility-link-featured">
           Recipe Book
         </a>
         <a href="/Recipe#favorites" class="nav-utility-link">
@@ -44,7 +44,7 @@ const currentPath = Astro.url.pathname;
       <div class="flex flex-col items-center justify-center">
         <a href="/Recipe" class="group text-center">
           <span class="block font-condensed text-[0.65rem] uppercase tracking-[0.24em] text-copper-700/90 mb-1">
-            Piglet&apos;s Gourmet Odyssey
+            Home Recipe Archive
           </span>
           <span class="font-display text-2xl lg:text-[2rem] leading-none font-semibold text-brown-800 tracking-[0.02em] group-hover:text-wine-700 transition-colors">
             Piglet&apos;s Gourmet Odyssey
@@ -65,15 +65,15 @@ const currentPath = Astro.url.pathname;
           <a
             href={cat.path}
             class:list={[
-              'relative px-3.5 py-2 text-[0.82rem] font-condensed tracking-[0.08em] transition-colors duration-200 rounded-full whitespace-nowrap',
+              'nav-category-link',
               currentPath === cat.path
-                ? 'text-wine-700 bg-wine-50'
-                : 'text-warm-gray-600 hover:text-wine-700 hover:bg-white/80'
+                ? 'nav-category-link-active'
+                : 'nav-category-link-idle'
             ]}
           >
             {cat.label}
             {currentPath === cat.path && (
-              <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-copper-500 rounded-full" />
+              <span class="absolute left-1/2 top-full mt-1.5 -translate-x-1/2 h-px w-5 bg-copper-500" />
             )}
           </a>
         ))}

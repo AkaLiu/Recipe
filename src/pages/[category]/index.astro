@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import RecipeLayout from '../../layouts/RecipeLayout.astro';
-import RecipeCard from '../../components/RecipeCard.astro';
 
 export async function getStaticPaths() {
   const categories = ['鲁', '川', '粤闽', '淮扬', '徽湘', '云贵', '意法', '南洋', 'Silk-Road', 'Desserts', 'Drinks'];
@@ -42,48 +41,95 @@ const categoryDescriptions: Record<string, string> = {
   'Desserts': 'Sweet endings and pastry creations',
   'Drinks': 'Beverages and refreshments',
 };
+
+function getRecipeSlug(id: string) {
+  return id.replace(/\.mdx?$/, '').split('/').pop() || '';
+}
+
+function getRecipeSummary(body: string) {
+  const lines = body
+    .replace(/^---[\s\S]*?---\s*/, '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .filter((line) => !line.startsWith('##'))
+    .filter((line) => !line.startsWith('|'))
+    .filter((line) => !line.startsWith('-'))
+    .filter((line) => !/^\d+\./.test(line));
+
+  return lines[0] || 'A structured recipe from this chapter, styled as a cleaner editorial card instead of a basic markdown list.';
+}
 ---
 
 <RecipeLayout title={`${categoryLabels[category]} | 菜谱`}>
-  <!-- Category Header -->
   <section class="bg-gradient-to-b from-linen-100 to-linen-50 py-16 md:py-24 border-b border-linen-200">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <nav class="flex justify-center items-center gap-2 text-sm text-warm-gray-400 mb-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center gap-2 text-sm text-warm-gray-400 mb-8">
         <a href="/Recipe" class="hover:text-wine-700 transition-colors">首页</a>
         <span>/</span>
         <span class="text-brown-800 font-medium">{categoryLabels[category]}</span>
       </nav>
 
-      <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-brown-800 tracking-tight mb-4">
-        {categoryLabels[category]}
-      </h1>
-      <p class="text-warm-gray-500 max-w-md mx-auto mb-4 italic font-serif">
-        {categoryDescriptions[category]}
-      </p>
-      <p class="text-sm text-warm-gray-400">
-        {categoryRecipes.length} 道菜谱
-      </p>
+      <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_15rem] lg:items-end">
+        <div>
+          <p class="eyebrow mb-4">Recipe Chapter</p>
+          <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-semibold text-brown-800 tracking-tight mb-4">
+            {categoryLabels[category]}
+          </h1>
+          <p class="text-warm-gray-500 max-w-2xl italic font-serif text-lg leading-8">
+            {categoryDescriptions[category]}
+          </p>
+        </div>
+        <div class="rounded-[1.5rem] border border-linen-200 bg-white/80 p-5 shadow-[0_12px_28px_rgba(93,67,42,0.05)]">
+          <p class="font-condensed text-[0.72rem] uppercase tracking-[0.18em] text-copper-700 mb-2">In This Chapter</p>
+          <p class="font-serif text-3xl font-semibold text-brown-800">{categoryRecipes.length}</p>
+          <p class="text-sm text-warm-gray-500 mt-2">recipes presented in a cleaner editorial layout.</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Recipe Grid -->
   <section class="py-14 md:py-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       {categoryRecipes.length > 0 ? (
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {categoryRecipes.map((recipe) => (
-            <div class="animate-on-scroll">
-              <RecipeCard
-                title={recipe.data.title}
-                titleEn={recipe.data.titleEn}
-                category={recipe.data.category}
-                prepTime={recipe.data.prepTime}
-                cookTime={recipe.data.cookTime}
-                servings={recipe.data.servings}
-                coverImage={recipe.data.coverImage}
-                id={recipe.id}
-              />
-            </div>
+        <div class="space-y-8">
+          {categoryRecipes.map((recipe, index) => (
+            <a
+              href={`/Recipe/${recipe.data.category}/${getRecipeSlug(recipe.id)}`}
+              class="chapter-recipe-card animate-on-scroll group"
+            >
+              <div class="chapter-recipe-media">
+                <img
+                  src={recipe.data.coverImage}
+                  alt={recipe.data.title}
+                  class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                  loading="lazy"
+                />
+              </div>
+              <div class="chapter-recipe-copy">
+                <div class="flex flex-wrap items-center gap-3 text-[0.72rem] font-condensed uppercase tracking-[0.16em] text-copper-700">
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <span>{categoryLabels[category]}</span>
+                  {recipe.data.prepTime && <span>Prep {recipe.data.prepTime}</span>}
+                  {recipe.data.cookTime && <span>Cook {recipe.data.cookTime}</span>}
+                </div>
+                <h2 class="mt-4 font-serif text-3xl md:text-4xl font-semibold text-brown-800 leading-tight group-hover:text-wine-700 transition-colors">
+                  {recipe.data.title}
+                </h2>
+                {recipe.data.titleEn && (
+                  <p class="mt-2 text-lg text-warm-gray-500 italic">{recipe.data.titleEn}</p>
+                )}
+                <div class="w-12 h-px bg-copper-500 mt-5 mb-5 group-hover:w-20 transition-all duration-500"></div>
+                <p class="text-base leading-8 text-brown-700 max-w-2xl">
+                  {getRecipeSummary(recipe.body)}
+                </p>
+                <div class="mt-6 flex flex-wrap gap-3 text-sm text-warm-gray-500">
+                  {recipe.data.servings && <span>Serves {recipe.data.servings}</span>}
+                  {recipe.data.bakeTime && <span>{recipe.data.bakeTime}</span>}
+                  {recipe.data.robot && <span>{recipe.data.robot}</span>}
+                </div>
+              </div>
+            </a>
           ))}
         </div>
       ) : (

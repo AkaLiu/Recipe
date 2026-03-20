@@ -10,7 +10,8 @@
     "astro": "astro",
     "check:recipe-layout": "node scripts/check-recipe-layout.js",
     "pdf:book": "node scripts/export-pdf.js",
-    "export:book": "npm run build && npm run pdf:book"
+    "export:book": "npm run build && npm run pdf:book",
+    "push:pdf": "bash scripts/push-with-pdf.sh"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",

@@ -1,7 +1,8 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getCollection } from 'astro:content';
 import RecipeLayout from '../../layouts/RecipeLayout.astro';
 import RecipeMeta from '../../components/RecipeMeta.astro';
+import { parseRecipeBody } from '../../utils/recipeBody';
 
 export async function getStaticPaths() {
   const recipes = await getCollection('recipes');
@@ -19,45 +20,58 @@ export async function getStaticPaths() {
 }
 
 const { recipe } = Astro.props;
-const { Content } = await render(recipe);
 const recipeId = recipe.id.replace(/\.mdx?$/, '');
+const { ingredientRows, stepItems, tipItems, extras } = parseRecipeBody(recipe.body);
 ---
 
 <RecipeLayout
   title={`${recipe.data.title} | 菜谱`}
   description={recipe.data.titleEn || recipe.data.title}
 >
-  <!-- Hero Section with Cover Image (hidden in print) -->
   <div
-    class="relative h-80 md:h-[32rem] bg-cover bg-center no-print"
+    class="relative min-h-[28rem] md:min-h-[36rem] bg-cover bg-center no-print"
     style={`background-image: url('${recipe.data.coverImage}')`}
   >
-    <div class="absolute inset-0 bg-gradient-to-b from-brown-900/40 via-brown-900/20 to-brown-900/70"></div>
-    <div class="absolute inset-0 flex flex-col items-center justify-end pb-12 md:pb-16 text-white p-4">
+    <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(52,30,22,0.18)_0%,rgba(52,30,22,0.25)_35%,rgba(52,30,22,0.72)_100%)]"></div>
+    <div class="absolute inset-0 flex flex-col justify-end text-white px-4 sm:px-6 lg:px-8 pb-12 md:pb-16">
       <nav class="absolute top-6 left-6 flex items-center gap-2 text-sm text-white/70">
         <a href="/Recipe" class="hover:text-white transition-colors">首页</a>
         <span>/</span>
         <a href={`/Recipe/${recipe.data.category}`} class="hover:text-white transition-colors">{recipe.data.category}</a>
       </nav>
 
-      <span class="px-4 py-1.5 text-xs font-medium tracking-wider uppercase
-                    bg-wine-700/80 text-white rounded-full backdrop-blur-sm mb-5
-                    border border-white/10">
-        {recipe.data.category}
-      </span>
-      <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center drop-shadow-lg leading-tight">
-        {recipe.data.title}
-      </h1>
-      {recipe.data.titleEn && (
-        <p class="text-lg md:text-xl mt-3 text-white/80 drop-shadow font-serif italic">
-          {recipe.data.titleEn}
-        </p>
-      )}
+      <div class="max-w-6xl mx-auto w-full">
+        <span class="inline-flex px-4 py-1.5 text-[0.72rem] font-condensed tracking-[0.18em] uppercase
+                      bg-white/14 text-white rounded-full backdrop-blur-sm mb-5
+                      border border-white/20">
+          {recipe.data.category}
+        </span>
+        <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-end">
+          <div>
+            <p class="font-condensed text-[0.78rem] uppercase tracking-[0.26em] text-linen-100/75 mb-4">
+              Recipe Detail
+            </p>
+            <h1 class="font-display text-4xl md:text-5xl lg:text-7xl font-semibold drop-shadow-lg leading-[0.92]">
+              {recipe.data.title}
+            </h1>
+            {recipe.data.titleEn && (
+              <p class="text-lg md:text-xl mt-4 text-white/82 drop-shadow font-serif italic">
+                {recipe.data.titleEn}
+              </p>
+            )}
+          </div>
+          <div class="hidden lg:flex justify-end">
+            <div class="recipe-hero-note">
+              <p class="recipe-hero-note-kicker">Kitchen Edit</p>
+              <p class="recipe-hero-note-copy">Clean layout, clearer blocks, and a steadier reading rhythm for each recipe.</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <article class="print:w-full print:p-0">
-    <!-- Print Header -->
     <header class="hidden print:block mb-6 border-b-2 border-wine-700 pb-4">
       <div class="flex justify-between items-baseline">
         <h1 class="text-3xl font-bold text-wine-800 font-serif">{recipe.data.title}</h1>
@@ -66,47 +80,95 @@ const recipeId = recipe.id.replace(/\.mdx?$/, '');
       <p class="text-sm text-gray-600 mt-1">{recipe.data.category}</p>
     </header>
 
-    <!-- Meta Info (screen only) - overlapping hero -->
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-10 no-print">
-      <div class="bg-white rounded-xl shadow-lg p-6 border border-linen-200">
-        <RecipeMeta
-          prepTime={recipe.data.prepTime}
-          cookTime={recipe.data.cookTime}
-          bakeTime={recipe.data.bakeTime}
-          coolTime={recipe.data.coolTime}
-          difficulty={recipe.data.difficulty}
-          robot={recipe.data.robot}
-        />
-        <div class="border-t border-linen-200 mt-4 pt-4 flex justify-center">
-          <button id="like-btn" data-recipe-id={recipeId} class="flex items-center gap-2 text-warm-gray-400 hover:text-wine-700 transition-colors duration-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 md:-mt-12 relative z-10 no-print">
+      <div class="recipe-header-panel">
+        <div class="recipe-header-main">
+          <p class="eyebrow mb-4">Recipe Details</p>
+          <RecipeMeta
+            prepTime={recipe.data.prepTime}
+            cookTime={recipe.data.cookTime}
+            bakeTime={recipe.data.bakeTime}
+            coolTime={recipe.data.coolTime}
+            difficulty={recipe.data.difficulty}
+            robot={recipe.data.robot}
+          />
+        </div>
+        <div class="recipe-header-actions">
+          <p class="eyebrow mb-4">Save This Dish</p>
+          <button id="like-btn" data-recipe-id={recipeId} class="recipe-like-button">
             <svg class="w-5 h-5" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path class="heart-path" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
             </svg>
-            <span id="like-label" class="text-sm font-medium">收藏</span>
+            <span id="like-label" class="text-sm font-medium">收藏这道菜</span>
           </button>
+          <p class="recipe-header-aside">Saved recipes will appear in the draggable favorites rail on the homepage.</p>
         </div>
       </div>
     </div>
 
-    <!-- Print Meta Info -->
     <div class="hidden print:flex gap-6 mb-6 text-sm text-gray-700">
       {recipe.data.difficulty && <span><strong>难度:</strong> {recipe.data.difficulty}</span>}
     </div>
 
-    <!-- Recipe Content: restructured by client script into two-column layout -->
     <div class="recipe-content-grid print:p-0 print:max-w-none">
-      <div id="recipe-prose" class="prose prose-lg max-w-none
-                  prose-headings:text-wine-700 prose-headings:font-serif
-                  prose-p:text-brown-800 prose-p:leading-relaxed
-                  prose-li:text-brown-800
-                  prose-strong:text-brown-900
-                  prose-table:my-0
-                  print:prose-headings:text-wine-800">
-        <Content />
+      <div class="recipe-article">
+        <div class="recipe-two-col">
+          <aside class="recipe-sidebar">
+            <div class="recipe-sidebar-inner">
+              <h2>食材</h2>
+              <table>
+                <thead>
+                  <tr>
+                    <th>用量</th>
+                    <th>食材</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ingredientRows.map((row) => (
+                    <tr>
+                      <td>{row.amount}</td>
+                      <td>{row.ingredient}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </aside>
+
+          <section class="recipe-main-steps">
+            <h2>步骤</h2>
+            <ol>
+              {stepItems.map((step) => (
+                <li>{step}</li>
+              ))}
+            </ol>
+          </section>
+        </div>
+
+        {tipItems.length > 0 && (
+          <section class="recipe-tips-callout">
+            <h2>小贴士</h2>
+            <ul>
+              {tipItems.map((tip) => (
+                <li>{tip}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {extras.map((section) => (
+          <section class="recipe-tips-callout">
+            <h2>{section.title}</h2>
+            <ul>
+              {section.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </section>
+        ))}
       </div>
     </div>
 
-    <!-- Action Buttons (screen only) -->
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 no-print">
       <div class="border-t border-linen-200 pt-8">
         <div class="flex flex-wrap gap-4">
@@ -122,15 +184,16 @@ const recipeId = recipe.id.replace(/\.mdx?$/, '');
             </svg>
             返回 {recipe.data.category}
           </a>
-          <button
-            onclick="window.print()"
+          <a
+            href="/Recipe/recipe-collection.pdf"
+            download="Piglets-Gourmet-Odyssey.pdf"
             class="btn-copper ml-auto"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            导出 PDF
-          </button>
+            Download PDF Book
+          </a>
         </div>
       </div>
     </div>
@@ -138,92 +201,6 @@ const recipeId = recipe.id.replace(/\.mdx?$/, '');
 </RecipeLayout>
 
 <script>
-  // Restructure MDX prose content into a two-column layout:
-  // Left sidebar: ingredients table
-  // Right main: steps
-  // Full-width bottom: tips callout
-  function restructureRecipe() {
-    const prose = document.getElementById('recipe-prose');
-    if (!prose) return;
-
-    const headings = prose.querySelectorAll('h2');
-    if (headings.length === 0) return;
-
-    // Collect sections: each h2 and all siblings until the next h2
-    const sections: { heading: Element; content: Element[] }[] = [];
-    headings.forEach((h2) => {
-      const content: Element[] = [];
-      let next = h2.nextElementSibling;
-      while (next && next.tagName !== 'H2') {
-        content.push(next);
-        next = next.nextElementSibling;
-      }
-      sections.push({ heading: h2, content });
-    });
-
-    // Identify sections by heading text
-    let ingredientSection: { heading: Element; content: Element[] } | null = null;
-    let stepsSection: { heading: Element; content: Element[] } | null = null;
-    let tipsSection: { heading: Element; content: Element[] } | null = null;
-
-    sections.forEach((sec) => {
-      const text = sec.heading.textContent || '';
-      if (text.includes('食材')) ingredientSection = sec;
-      else if (text.includes('步骤')) stepsSection = sec;
-      else if (text.includes('小贴士')) tipsSection = sec;
-    });
-
-    if (!ingredientSection && !stepsSection) return;
-
-    // Clear prose container
-    prose.innerHTML = '';
-    prose.classList.remove('prose', 'prose-lg');
-
-    // Build two-column grid
-    const grid = document.createElement('div');
-    grid.className = 'recipe-two-col';
-
-    // Sidebar: ingredients
-    if (ingredientSection) {
-      const sidebar = document.createElement('div');
-      sidebar.className = 'recipe-sidebar';
-      const inner = document.createElement('div');
-      inner.className = 'recipe-sidebar-inner';
-      inner.appendChild(ingredientSection.heading);
-      ingredientSection.content.forEach((el) => inner.appendChild(el));
-      sidebar.appendChild(inner);
-      grid.appendChild(sidebar);
-    }
-
-    // Main: steps
-    if (stepsSection) {
-      const main = document.createElement('div');
-      main.className = 'recipe-main-steps';
-      main.appendChild(stepsSection.heading);
-      stepsSection.content.forEach((el) => main.appendChild(el));
-      grid.appendChild(main);
-    }
-
-    prose.appendChild(grid);
-
-    // Tips callout: full width below the grid
-    if (tipsSection) {
-      const callout = document.createElement('div');
-      callout.className = 'recipe-tips-callout';
-      callout.appendChild(tipsSection.heading);
-      tipsSection.content.forEach((el) => callout.appendChild(el));
-      prose.appendChild(callout);
-    }
-  }
-
-  // Only restructure on screens wide enough for two columns
-  if (window.innerWidth >= 1024) {
-    restructureRecipe();
-  }
-</script>
-
-<script>
-  // Like/favorites functionality
   const likeBtn = document.getElementById('like-btn');
   const likeLabel = document.getElementById('like-label');
 
@@ -243,17 +220,17 @@ const recipeId = recipe.id.replace(/\.mdx?$/, '');
 
     function updateUI() {
       const liked = isLiked();
-      const heartPath = likeBtn!.querySelector('.heart-path');
+      const heartPath = likeBtn.querySelector('.heart-path');
       if (liked) {
         heartPath?.setAttribute('fill', 'currentColor');
-        likeBtn!.classList.add('text-wine-700');
-        likeBtn!.classList.remove('text-warm-gray-400');
-        likeLabel!.textContent = '已收藏';
+        likeBtn.classList.add('text-wine-700');
+        likeBtn.classList.remove('text-warm-gray-400');
+        likeLabel.textContent = '已收藏';
       } else {
         heartPath?.setAttribute('fill', 'none');
-        likeBtn!.classList.remove('text-wine-700');
-        likeBtn!.classList.add('text-warm-gray-400');
-        likeLabel!.textContent = '收藏';
+        likeBtn.classList.remove('text-wine-700');
+        likeBtn.classList.add('text-warm-gray-400');
+        likeLabel.textContent = '收藏';
       }
     }
 

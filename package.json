@@ -7,7 +7,9 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "pdf:book": "node scripts/export-pdf.js",
+    "export:book": "npm run build && npm run pdf:book"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",
@@ -19,6 +21,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
+    "playwright": "^1.58.2",
     "typescript": "^5.3.0"
   }
 }

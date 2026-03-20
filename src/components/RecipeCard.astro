@@ -8,14 +8,15 @@ interface Props {
   servings: number;
   coverImage: string;
   id: string;
+  compact?: boolean;
 }
 
-const { title, titleEn, category, prepTime, cookTime, servings, coverImage, id } = Astro.props;
+const { title, titleEn, category, prepTime, cookTime, servings, coverImage, id, compact = false } = Astro.props;
 const slug = id.replace(/\.mdx?$/, '').split('/').pop() || '';
 ---
 
-<a href={`/Recipe/${category}/${slug}`} class="recipe-card group">
-  <div class="relative overflow-hidden aspect-[3/2]">
+<a href={`/Recipe/${category}/${slug}`} class:list={['recipe-card recipe-card-editorial group', compact && 'recipe-card-compact']}>
+  <div class:list={['relative overflow-hidden', compact ? 'aspect-[4/3]' : 'aspect-[4/5]']}>
     <img
       src={coverImage}
       alt={title}
@@ -23,28 +24,31 @@ const slug = id.replace(/\.mdx?$/, '').split('/').pop() || '';
       loading="lazy"
     />
     <div class="absolute inset-0 bg-gradient-to-t from-brown-900/50 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-    <span class="absolute top-3 left-3 px-2.5 py-1 text-xs font-medium tracking-wide bg-white/90 text-wine-700 rounded-full backdrop-blur-sm border border-white/20 shadow-sm">
+    <span class="absolute top-4 left-4 px-3 py-1 text-[0.68rem] font-condensed font-semibold uppercase tracking-[0.18em] bg-linen-50/92 text-wine-700 rounded-full backdrop-blur-sm border border-white/30 shadow-sm">
       {category}
     </span>
   </div>
 
-  <div class="p-5">
-    <h3 class="font-serif text-lg font-bold text-brown-800 leading-snug group-hover:text-wine-700 transition-colors duration-300">
+  <div class:list={[compact ? 'p-4 md:p-4.5' : 'p-5 md:p-6']}>
+    <p class="text-[0.7rem] font-condensed uppercase tracking-[0.2em] text-copper-700 mb-3">
+      Kitchen Notes
+    </p>
+    <h3 class:list={['font-serif font-semibold text-brown-800 leading-[1.05] group-hover:text-wine-700 transition-colors duration-300', compact ? 'text-[1.15rem]' : 'text-[1.45rem]']}>
       {title}
     </h3>
     {titleEn && (
-      <p class="text-sm text-warm-gray-500 mt-1 italic">{titleEn}</p>
+      <p class:list={['text-warm-gray-500 mt-2 italic leading-relaxed', compact ? 'text-[0.82rem]' : 'text-sm']}>{titleEn}</p>
     )}
 
-    <div class="w-8 h-px bg-copper-400 mt-3 mb-3 group-hover:w-12 transition-all duration-500 ease-out"></div>
+    <div class:list={['h-px bg-copper-500 group-hover:w-16 transition-all duration-500 ease-out', compact ? 'w-8 mt-3 mb-3' : 'w-10 mt-4 mb-4']}></div>
 
-    <div class="flex items-center gap-4 text-xs text-warm-gray-500">
+    <div class:list={['flex flex-wrap items-center gap-x-4 gap-y-2 font-condensed uppercase tracking-[0.14em] text-warm-gray-500', compact ? 'text-[0.66rem]' : 'text-[0.72rem]']}>
       {prepTime && (
         <span class="flex items-center gap-1.5">
           <svg class="w-3.5 h-3.5 text-copper-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          {prepTime}
+          Prep {prepTime}
         </span>
       )}
       {cookTime && (
@@ -52,7 +56,7 @@ const slug = id.replace(/\.mdx?$/, '').split('/').pop() || '';
           <svg class="w-3.5 h-3.5 text-copper-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
           </svg>
-          {cookTime}
+          Cook {cookTime}
         </span>
       )}
       {servings && (
@@ -60,7 +64,7 @@ const slug = id.replace(/\.mdx?$/, '').split('/').pop() || '';
           <svg class="w-3.5 h-3.5 text-copper-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
-          {servings}人
+          Serves {servings}
         </span>
       )}
     </div>

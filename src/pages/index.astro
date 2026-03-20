@@ -33,139 +33,128 @@ const categories = [
 ];
 
 const totalRecipes = allRecipes.length;
+const spotlightRecipe = allRecipes[0];
 ---
 
-<RecipeLayout title="菜谱收藏 | Recipe Collection">
-  <!-- Hero Section -->
-  <section class="relative bg-gradient-to-b from-linen-100 via-linen-50 to-linen-50 py-20 md:py-32 lg:py-40 overflow-hidden">
-    <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-copper-400 to-transparent"></div>
-
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
-      <div class="flex items-center justify-center gap-3 mb-8 animate-fade-in" style="opacity:0">
-        <span class="w-8 h-px bg-copper-400"></span>
-        <span class="text-copper-600 text-sm font-medium tracking-[0.2em] uppercase">Recipe Collection</span>
-        <span class="w-8 h-px bg-copper-400"></span>
-      </div>
-
-      <h1 class="font-display text-5xl md:text-7xl lg:text-8xl font-bold text-brown-800 tracking-tight leading-[0.95] mb-6 animate-fade-in-up" style="opacity:0">
-        菜谱收藏
-      </h1>
-
-      <p class="text-lg md:text-xl text-warm-gray-500 max-w-lg mx-auto mb-10 leading-relaxed font-light animate-fade-in-delay-1" style="opacity:0">
-        A personal journey through Chinese and international cuisines,
-        one recipe at a time.
-      </p>
-
-      <p class="text-sm text-warm-gray-400 mb-10 animate-fade-in-delay-2" style="opacity:0">
-        {totalRecipes} recipes &middot; {categories.length} cuisines
-      </p>
-
-      <div class="flex flex-wrap justify-center gap-4 animate-fade-in-delay-3" style="opacity:0">
-        <a href="#featured" class="btn-primary">
-          浏览菜谱
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </a>
-        <a href="/Recipe/book" class="btn-outline">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          导出 PDF 全书
-        </a>
+<RecipeLayout title="Piglet’s Gourmet Odyssey">
+  <section class="relative min-h-[72vh] overflow-hidden border-b border-linen-200">
+    {spotlightRecipe && (
+      <>
+        <img
+          src={spotlightRecipe.data.coverImage}
+          alt={spotlightRecipe.data.title}
+          class="absolute inset-0 h-full w-full object-cover"
+        />
+        <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(64,39,29,0.50)_0%,rgba(64,39,29,0.26)_34%,rgba(64,39,29,0.12)_58%,rgba(64,39,29,0.28)_100%)]"></div>
+        <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(250,247,241,0.08)_0%,rgba(250,247,241,0)_36%,rgba(250,247,241,0.14)_100%)]"></div>
+      </>
+    )}
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-14 md:pt-24 md:pb-20 lg:pt-28 lg:pb-24 min-h-[72vh] flex items-end">
+      <div class="max-w-2xl text-white animate-fade-in-up" style="opacity:0">
+        <p class="font-condensed text-[0.78rem] uppercase tracking-[0.24em] text-linen-100/90 mb-4">
+          Piglet&apos;s Gourmet Odyssey
+        </p>
+        <h1 class="font-serif text-5xl md:text-7xl lg:text-[5rem] font-semibold tracking-[0.01em] leading-[0.92] text-balance">
+          Piglet&apos;s Gourmet Odyssey
+        </h1>
+        <p class="mt-4 text-sm md:text-base tracking-[0.12em] uppercase font-condensed text-linen-100/80">
+          Warm table, sharp appetite
+        </p>
+        <div class="mt-7 flex flex-wrap items-center gap-x-4 gap-y-2 text-[0.78rem] font-condensed uppercase tracking-[0.16em] text-linen-100/80">
+          <span>{totalRecipes} Recipes</span>
+          <span>{categories.length} Cuisines</span>
+        </div>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a href="#favorites" class="btn-primary">查看收藏</a>
+          <a href="#categories" class="btn-outline btn-outline-light">浏览菜系</a>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Favorites Section -->
-  <section id="featured" class="py-16 md:py-24">
+  <section id="favorites" class="py-16 md:py-20 bg-linen-100/70 border-y border-linen-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="section-heading section-heading-center text-2xl md:text-3xl">
-          <span class="inline-flex items-center gap-2">
-            <svg class="w-6 h-6 text-wine-700" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-            </svg>
-            精选菜谱
-          </span>
-        </h2>
+      <div class="section-header-row items-end">
+        <div>
+          <p class="eyebrow mb-3">Saved By You</p>
+          <h2 class="section-heading text-3xl md:text-4xl">
+            Favorite Recipes
+          </h2>
+        </div>
       </div>
 
-      <!-- Fallback message (shown when no likes) -->
-      <div id="favorites-empty" class="text-center py-12 text-warm-gray-400">
-        <svg class="w-12 h-12 mx-auto mb-4 text-warm-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <div id="favorites-empty" class="favorites-empty mt-10">
+        <svg class="w-12 h-12 mx-auto mb-4 text-copper-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
         </svg>
-        <p class="text-lg">浏览菜谱并点击收藏，你的精选菜谱将在这里出现</p>
+        <p class="font-serif text-2xl text-brown-800">还没有收藏的菜谱</p>
+        <p class="mt-3 text-warm-gray-500 leading-7">先去点几道想做的菜，收藏区会在这里形成一条可以左右滑动的专属菜单。</p>
       </div>
 
-      <!-- Favorites grid (cards hidden by default, shown via JS) -->
-      <div id="favorites-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-        {allRecipes.map((recipe) => {
-          const rid = recipe.id.replace(/\.mdx?$/, '');
-          return (
-            <div class="animate-on-scroll" data-recipe-id={rid} hidden>
-              <RecipeCard
-                title={recipe.data.title}
-                titleEn={recipe.data.titleEn}
-                category={recipe.data.category}
-                prepTime={recipe.data.prepTime}
-                cookTime={recipe.data.cookTime}
-                servings={recipe.data.servings}
-                coverImage={recipe.data.coverImage}
-                id={recipe.id}
-              />
-            </div>
-          );
-        })}
+      <div class="favorites-rail-wrap mt-10">
+        <div id="favorites-grid" class="favorites-rail">
+          {allRecipes.map((recipe) => {
+            const rid = recipe.id.replace(/\.mdx?$/, '');
+            return (
+              <div class="rail-card" data-recipe-id={rid} hidden>
+                <RecipeCard
+                  title={recipe.data.title}
+                  titleEn={recipe.data.titleEn}
+                  category={recipe.data.category}
+                  prepTime={recipe.data.prepTime}
+                  cookTime={recipe.data.cookTime}
+                  servings={recipe.data.servings}
+                  coverImage={recipe.data.coverImage}
+                  id={recipe.id}
+                  compact={true}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Categories Section -->
-  <section id="categories" class="py-16 md:py-24 bg-linen-100/50">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="section-heading section-heading-center text-2xl md:text-3xl">
-          菜系分类
-        </h2>
+  <section id="categories" class="py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="section-header-row items-end">
+        <div>
+          <p class="eyebrow mb-3">Browse By Cuisine</p>
+          <h2 class="section-heading text-3xl md:text-4xl">菜系分类</h2>
+        </div>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+      <div class="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
         {categories.map((cat) => (
           <a
             href={`/Recipe/${cat.name}`}
-            class="animate-on-scroll group relative flex flex-col items-center p-6 md:p-8
-                   bg-white rounded-xl
-                   shadow-[0_1px_3px_rgba(61,44,44,0.04)]
-                   hover:shadow-[0_8px_20px_rgba(61,44,44,0.07)]
-                   transition-all duration-500 hover:-translate-y-1
-                   border border-linen-200 hover:border-copper-300"
+            class="animate-on-scroll category-tile group"
           >
-            <span class="text-3xl md:text-4xl mb-3">{cat.emoji}</span>
-            <span class="font-serif font-bold text-brown-800 group-hover:text-wine-700 transition-colors duration-300">
+            <span class="text-3xl md:text-4xl mb-4">{cat.emoji}</span>
+            <span class="font-serif text-xl font-semibold text-brown-800 group-hover:text-wine-700 transition-colors duration-300">
               {cat.label}
             </span>
-            <span class="text-xs text-warm-gray-400 mt-1.5 tracking-wide">
+            <span class="text-[0.72rem] font-condensed text-warm-gray-400 mt-2 uppercase tracking-[0.16em]">
               {recipesByCategory[cat.name]?.length || 0} 道菜
             </span>
-            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 group-hover:w-8 h-0.5 bg-copper-500 rounded-full transition-all duration-500 ease-out"></div>
+            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 group-hover:w-10 h-0.5 bg-copper-500 rounded-full transition-all duration-500 ease-out"></div>
           </a>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- More Recipes Grid -->
-  <section class="py-16 md:py-24">
+  <section class="pb-20 md:pb-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="section-heading section-heading-center text-2xl md:text-3xl">
-          更多菜谱
-        </h2>
+      <div class="section-header-row items-end">
+        <div>
+          <p class="eyebrow mb-3">Full Archive</p>
+          <h2 class="section-heading text-3xl md:text-4xl">全部菜谱</h2>
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {allRecipes.map((recipe) => (
           <div class="animate-on-scroll">
             <RecipeCard
@@ -186,12 +175,15 @@ const totalRecipes = allRecipes.length;
 </RecipeLayout>
 
 <script>
-  // Favorites: show liked recipes on homepage
   const STORAGE_KEY = 'recipe-likes';
   const grid = document.getElementById('favorites-grid');
   const empty = document.getElementById('favorites-empty');
 
   if (grid && empty) {
+    grid.style.display = 'flex';
+    grid.style.flexWrap = 'nowrap';
+    grid.style.overflowX = 'auto';
+
     function getLikes(): string[] {
       try {
         return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -204,12 +196,61 @@ const totalRecipes = allRecipes.length;
     grid.querySelectorAll<HTMLElement>('[data-recipe-id]').forEach((card) => {
       if (likes.includes(card.dataset.recipeId || '')) {
         card.removeAttribute('hidden');
+        card.classList.add('is-visible');
         shown++;
+      } else {
+        card.setAttribute('hidden', '');
       }
     });
 
     if (shown > 0) {
       empty.hidden = true;
+    } else {
+      empty.hidden = false;
     }
+
+    let isPointerDown = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+    let dragged = false;
+
+    function handlePointerMove(event) {
+      if (!isPointerDown) return;
+      const delta = event.clientX - startX;
+      if (Math.abs(delta) > 6) {
+        dragged = true;
+      }
+      grid.scrollLeft = startScrollLeft - delta;
+    }
+
+    function stopDragging() {
+      if (!isPointerDown) return;
+      isPointerDown = false;
+      grid.classList.remove('is-dragging');
+      requestAnimationFrame(() => {
+        dragged = false;
+      });
+    }
+
+    grid.addEventListener('pointerdown', (event) => {
+      isPointerDown = true;
+      dragged = false;
+      startX = event.clientX;
+      startScrollLeft = grid.scrollLeft;
+      grid.classList.add('is-dragging');
+    });
+
+    grid.addEventListener('pointermove', handlePointerMove);
+    grid.addEventListener('pointerup', stopDragging);
+    grid.addEventListener('pointerleave', stopDragging);
+    grid.addEventListener('pointercancel', stopDragging);
+
+    grid.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        if (dragged) {
+          event.preventDefault();
+        }
+      });
+    });
   }
 </script>

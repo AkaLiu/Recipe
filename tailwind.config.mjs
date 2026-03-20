@@ -89,8 +89,9 @@ export default {
       },
       fontFamily: {
         sans: ['Noto Sans SC', 'system-ui', 'sans-serif'],
-        serif: ['Merriweather', 'Georgia', 'serif'],
-        display: ['Playfair Display', 'Merriweather', 'Georgia', 'serif'],
+        serif: ['Noto Serif SC', 'Cormorant Garamond', 'Georgia', 'serif'],
+        display: ['Cormorant Garamond', 'Noto Serif SC', 'Georgia', 'serif'],
+        condensed: ['Barlow Condensed', 'Noto Sans SC', 'sans-serif'],
       },
       typography: {
         DEFAULT: {
@@ -100,13 +101,13 @@ export default {
             lineHeight: '1.75',
             h1: {
               color: '#9c2541',
-              fontFamily: 'Merriweather, Georgia, serif',
+              fontFamily: 'Cormorant Garamond, Noto Serif SC, Georgia, serif',
               fontWeight: '700',
               letterSpacing: '-0.02em',
             },
             h2: {
               color: '#9c2541',
-              fontFamily: 'Merriweather, Georgia, serif',
+              fontFamily: 'Cormorant Garamond, Noto Serif SC, Georgia, serif',
               fontWeight: '700',
               letterSpacing: '-0.01em',
               borderBottom: '1px solid #facdd5',
@@ -114,7 +115,7 @@ export default {
             },
             h3: {
               color: '#7c2d35',
-              fontFamily: 'Merriweather, Georgia, serif',
+              fontFamily: 'Cormorant Garamond, Noto Serif SC, Georgia, serif',
               fontWeight: '600',
             },
             a: {
@@ -138,7 +139,7 @@ export default {
               color: '#7c2d35',
               borderBottomColor: '#7c2d35',
               fontWeight: '600',
-              fontFamily: 'Merriweather, Georgia, serif',
+              fontFamily: 'Cormorant Garamond, Noto Serif SC, Georgia, serif',
               fontSize: '0.875em',
               letterSpacing: '0.05em',
               textTransform: 'uppercase',

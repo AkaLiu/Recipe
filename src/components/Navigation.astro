@@ -9,6 +9,9 @@ const categories = [
   { name: '意法', label: '意法', path: '/Recipe/意法' },
   { name: '南洋', label: '南洋', path: '/Recipe/南洋' },
   { name: 'Silk-Road', label: '丝路', path: '/Recipe/Silk-Road' },
+  { name: 'Latin-America', label: '拉美', path: '/Recipe/Latin-America' },
+  { name: 'Japan-Korea', label: '日韩', path: '/Recipe/Japan-Korea' },
+  { name: 'Fast-Food', label: '快餐', path: '/Recipe/Fast-Food' },
   { name: 'Desserts', label: '甜点', path: '/Recipe/Desserts' },
   { name: 'Drinks', label: '饮品', path: '/Recipe/Drinks' },
 ];
@@ -31,7 +34,7 @@ const currentPath = Astro.url.pathname;
       <div class="flex items-center justify-start lg:hidden">
         <button
           id="mobile-menu-btn"
-          class="p-2 rounded-lg text-warm-gray-600 hover:bg-linen-100 hover:text-wine-700 transition-colors"
+          class="p-2 rounded-none text-linen-100/80 hover:bg-white/10 hover:text-white transition-colors"
           aria-label="菜单"
           aria-expanded="false"
         >
@@ -43,10 +46,10 @@ const currentPath = Astro.url.pathname;
 
       <div class="flex flex-col items-center justify-center">
         <a href="/Recipe" class="group text-center">
-          <span class="block font-condensed text-[0.65rem] uppercase tracking-[0.24em] text-copper-700/90 mb-1">
+          <span class="block font-condensed text-[0.72rem] uppercase tracking-[0.28em] text-copper-300 mb-1">
             Home Recipe Archive
           </span>
-          <span class="font-display text-2xl lg:text-[2rem] leading-none font-semibold text-brown-800 tracking-[0.02em] group-hover:text-wine-700 transition-colors">
+          <span class="font-display text-[1.7rem] lg:text-[2.35rem] leading-none font-semibold text-linen-50 tracking-[0.03em] group-hover:text-white transition-colors">
             Piglet&apos;s Gourmet Odyssey
           </span>
         </a>
@@ -85,28 +88,28 @@ const currentPath = Astro.url.pathname;
   <div id="mobile-overlay" class="fixed inset-0 bg-brown-900/30 backdrop-blur-sm z-40 hidden lg:hidden opacity-0 transition-opacity duration-300"></div>
 
   <!-- Mobile Slide-out Menu -->
-  <div id="mobile-menu" class="fixed top-0 right-0 h-full w-72 bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-out lg:hidden">
+  <div id="mobile-menu" class="fixed top-0 right-0 h-full w-72 bg-[linear-gradient(180deg,rgba(44,32,28,0.99)_0%,rgba(34,26,23,0.99)_100%)] shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-out lg:hidden">
     <div class="p-6 pt-8">
       <div class="flex items-center justify-between mb-8">
-        <span class="font-serif font-bold text-wine-800 text-lg">菜系分类</span>
-        <button id="mobile-close-btn" class="p-2 rounded-lg hover:bg-linen-100 text-warm-gray-500">
+        <span class="font-serif font-bold text-linen-50 text-lg">菜系分类</span>
+        <button id="mobile-close-btn" class="p-2 rounded-none hover:bg-white/10 text-linen-100/70">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
       <div class="flex flex-col gap-1">
-        <a href="/Recipe#favorites" class="px-4 py-2.5 rounded-lg text-sm font-medium text-wine-700 bg-wine-50 mb-2">
+        <a href="/Recipe#favorites" class="px-4 py-2.5 rounded-none text-sm font-medium text-linen-50 bg-white/10 mb-2">
           我的收藏
         </a>
         {categories.map((cat) => (
           <a
             href={cat.path}
             class:list={[
-              'px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
+              'px-4 py-2.5 rounded-none text-sm font-medium transition-all duration-200',
               currentPath === cat.path
-                ? 'bg-wine-50 text-wine-700 border-l-2 border-copper-500'
-                : 'text-warm-gray-600 hover:bg-linen-100 hover:text-wine-700'
+                ? 'bg-white/10 text-copper-300 border-l-2 border-copper-500'
+                : 'text-linen-100/75 hover:bg-white/8 hover:text-white'
             ]}
           >
             {cat.label}

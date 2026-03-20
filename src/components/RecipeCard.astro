@@ -1,4 +1,6 @@
 ---
+import { getRecipeImageSrc } from '../utils/imageAssets';
+
 interface Props {
   title: string;
   titleEn?: string;
@@ -13,12 +15,13 @@ interface Props {
 
 const { title, titleEn, category, prepTime, cookTime, servings, coverImage, id, compact = false } = Astro.props;
 const slug = id.replace(/\.mdx?$/, '').split('/').pop() || '';
+const resolvedCoverImage = getRecipeImageSrc(coverImage);
 ---
 
 <a href={`/Recipe/${category}/${slug}`} class:list={['recipe-card recipe-card-editorial group', compact && 'recipe-card-compact']}>
   <div class:list={['relative overflow-hidden', compact ? 'aspect-[4/3]' : 'aspect-[4/5]']}>
     <img
-      src={coverImage}
+      src={resolvedCoverImage}
       alt={title}
       class="object-cover w-full h-full transition-transform duration-700 ease-out group-hover:scale-[1.04]"
       loading="lazy"

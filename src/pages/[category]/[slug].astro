@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import RecipeLayout from '../../layouts/RecipeLayout.astro';
 import { parseRecipeBody } from '../../utils/recipeBody';
+import { getRecipeImageSrc } from '../../utils/imageAssets';
 
 export async function getStaticPaths() {
   const recipes = await getCollection('recipes');
@@ -21,6 +22,7 @@ export async function getStaticPaths() {
 const { recipe } = Astro.props;
 const recipeId = recipe.id.replace(/\.mdx?$/, '');
 const { ingredientGroups, stepItems, tipItems, extras } = parseRecipeBody(recipe.body);
+const coverImageSrc = getRecipeImageSrc(recipe.data.coverImage);
 
 function getRecipeSummary(body: string) {
   const lines = body
@@ -69,7 +71,7 @@ const recipeSummary = getRecipeSummary(recipe.body);
     <div class="recipe-content-grid pt-4 md:pt-6 print:p-0 print:max-w-none">
       <section class="recipe-editorial-hero">
         <img
-          src={recipe.data.coverImage}
+          src={coverImageSrc}
           alt={recipe.data.title}
           class="recipe-editorial-hero-image"
         />

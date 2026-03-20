@@ -1,9 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
 import RecipeLayout from '../../layouts/RecipeLayout.astro';
+import { getRecipeImageSrc } from '../../utils/imageAssets';
 
 export async function getStaticPaths() {
-  const categories = ['鲁', '川', '粤闽', '淮扬', '徽湘', '云贵', '意法', '南洋', 'Silk-Road', 'Desserts', 'Drinks'];
+  const categories = ['鲁', '川', '粤闽', '淮扬', '徽湘', '云贵', '意法', '南洋', 'Silk-Road', 'Latin-America', 'Japan-Korea', 'Fast-Food', 'Desserts', 'Drinks'];
   return categories.map((category) => ({
     params: { category },
     props: { category },
@@ -24,6 +25,9 @@ const categoryLabels: Record<string, string> = {
   '意法': '意法',
   '南洋': '南洋',
   'Silk-Road': '丝路风味',
+  'Latin-America': '拉美',
+  'Japan-Korea': '日韩',
+  'Fast-Food': '快餐',
   'Desserts': '甜点',
   'Drinks': '饮品',
 };
@@ -38,6 +42,9 @@ const categoryDescriptions: Record<string, string> = {
   '意法': 'Italian and French classics, Mediterranean warmth',
   '南洋': 'Southeast Asian vibrancy, tropical aromatics',
   'Silk-Road': 'Silk Road inspirations, where East meets West',
+  'Latin-America': 'Latin American flavors, bright acids and fire-charred depth',
+  'Japan-Korea': 'Japanese and Korean staples, clean structure and savory focus',
+  'Fast-Food': 'Comforting quick bites and casual classics',
   'Desserts': 'Sweet endings and pastry creations',
   'Drinks': 'Beverages and refreshments',
 };
@@ -100,7 +107,7 @@ function getRecipeSummary(body: string) {
             >
               <div class="chapter-recipe-media">
                 <img
-                  src={recipe.data.coverImage}
+                  src={getRecipeImageSrc(recipe.data.coverImage)}
                   alt={recipe.data.title}
                   class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                   loading="lazy"

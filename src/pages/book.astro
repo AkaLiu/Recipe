@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import { parseRecipeBody } from '../utils/recipeBody';
+import { getRecipeImageSrc } from '../utils/imageAssets';
 
 const allRecipes = await getCollection('recipes');
 
@@ -14,6 +15,9 @@ const categories = [
   { name: '意法', label: '意法', labelEn: 'Italian & French', emoji: '🍝' },
   { name: '南洋', label: '南洋', labelEn: 'Southeast Asian', emoji: '🍋' },
   { name: 'Silk-Road', label: '丝路', labelEn: 'Silk Road', emoji: '🛤️' },
+  { name: 'Latin-America', label: '拉美', labelEn: 'Latin America', emoji: '🌽' },
+  { name: 'Japan-Korea', label: '日韩', labelEn: 'Japan & Korea', emoji: '🍜' },
+  { name: 'Fast-Food', label: '快餐', labelEn: 'Fast Food', emoji: '🍔' },
   { name: 'Desserts', label: '甜点', labelEn: 'Desserts', emoji: '🍰' },
   { name: 'Drinks', label: '饮品', labelEn: 'Drinks', emoji: '🧋' },
 ];
@@ -40,6 +44,9 @@ const categoryLabels: Record<string, string> = {
   '意法': '意法',
   '南洋': '南洋',
   'Silk-Road': '丝路风味',
+  'Latin-America': '拉美',
+  'Japan-Korea': '日韩',
+  'Fast-Food': '快餐',
   'Desserts': '甜点',
   'Drinks': '饮品',
 };
@@ -648,7 +655,7 @@ function getRecipeSummary(body: string) {
     <section class="page cover-page">
       {coverRecipe && (
         <div class="cover-media">
-          <img src={coverRecipe.data.coverImage} alt={coverRecipe.data.title} />
+          <img src={getRecipeImageSrc(coverRecipe.data.coverImage)} alt={coverRecipe.data.title} />
           <div class="cover-overlay"></div>
         </div>
       )}
@@ -696,7 +703,7 @@ function getRecipeSummary(body: string) {
     {categories.map((cat) => {
       const recipes = recipesByCategory[cat.name];
       if (!recipes?.length) return null;
-      const sectionImage = recipes[0].coverImage;
+      const sectionImage = getRecipeImageSrc(recipes[0].coverImage);
 
       return (
         <>
@@ -721,7 +728,7 @@ function getRecipeSummary(body: string) {
               <article class="page recipe-page">
                 <div class="recipe-shell" data-recipe-shell>
                   <header class="recipe-hero">
-                    <img src={recipe.coverImage} alt={recipe.title} />
+                    <img src={getRecipeImageSrc(recipe.coverImage)} alt={recipe.title} />
                     <div class="recipe-hero-copy">
                       <div class="kicker">{categoryLabels[cat.name]}</div>
                       <h1 class="recipe-title">{recipe.title}</h1>

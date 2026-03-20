@@ -1,0 +1,106 @@
+---
+interface Props {
+  name: string;
+  class?: string;
+}
+
+const { name, class: className = 'w-9 h-9' } = Astro.props;
+
+const icons: Record<string, string> = {
+  '鲁': `
+    <path d="M4 12c2.5-4 6-6 10-6 2.8 0 4.8.7 6 2-1.2 1.3-3.2 2-6 2-4 0-7.5-2-10-6Z" />
+    <path d="M4 12c2.5 4 6 6 10 6 2.8 0 4.8-.7 6-2-1.2-1.3-3.2-2-6-2-4 0-7.5 2-10 6Z" />
+    <path d="M8 12h8" />
+  `,
+  '川': `
+    <path d="M12 3c2 3 4 4.5 4 8a4 4 0 0 1-8 0c0-1.8.8-3.4 2-4.8" />
+    <path d="M8 15c0 3 2 5 4 6 2-1 4-3 4-6" />
+  `,
+  '粤闽': `
+    <path d="M4 10c1.2-2 3.6-3 7-3s5.8 1 7 3" />
+    <path d="M3 12h18" />
+    <path d="M6 12c0 4 2.5 7 6 7s6-3 6-7" />
+    <path d="M9 5c0-1.2 1-2 3-2s3 .8 3 2" />
+  `,
+  '淮扬': `
+    <path d="M6 4v9" />
+    <path d="M10 4v9" />
+    <path d="M8 13v7" />
+    <path d="M15 4c2 0 3 1.6 3 4s-1 4-3 4h-1V4h1Z" />
+    <path d="M15 12v8" />
+  `,
+  '徽湘': `
+    <path d="M4 17h16" />
+    <path d="M6 17 10 9l2 4 2-3 4 7" />
+    <path d="M9 6a1.5 1.5 0 1 1 0 .1Z" />
+  `,
+  '云贵': `
+    <path d="M12 20c4-3 6-6.5 6-10a6 6 0 0 0-12 0c0 3.5 2 7 6 10Z" />
+    <path d="M12 8c1.6 0 3 .8 4 2-1 .8-2.4 1.2-4 1.2S9 10.8 8 10c1-.9 2.4-2 4-2Z" />
+  `,
+  '意法': `
+    <path d="M7 5h10" />
+    <path d="M8 9h8" />
+    <path d="M6 13h12" />
+    <path d="M8 17h8" />
+    <path d="M10 5v12" />
+    <path d="M14 5v12" />
+  `,
+  '南洋': `
+    <path d="M12 20V9" />
+    <path d="M12 10c-1.6-2.4-4.2-3.8-7-4 1.4 2.8 3.6 4.8 7 5" />
+    <path d="M12 10c1.6-2.4 4.2-3.8 7-4-1.4 2.8-3.6 4.8-7 5" />
+    <path d="M9 20h6" />
+  `,
+  'Silk-Road': `
+    <path d="M4 16c2-3 4.5-4.5 7.5-4.5S17 13 20 16" />
+    <path d="M6 16v2" />
+    <path d="M18 16v2" />
+    <path d="M9 11c0-1.5 1-2.5 3-2.5s3 1 3 2.5" />
+    <path d="M7 20h10" />
+  `,
+  'Latin-America': `
+    <path d="M6 18c1-3 3-5 6-5s5 2 6 5" />
+    <path d="M8 12c0-2 1.5-3.5 4-3.5s4 1.5 4 3.5" />
+    <path d="M9 7h6" />
+    <path d="M7 20h10" />
+  `,
+  'Japan-Korea': `
+    <path d="M6 6h12" />
+    <path d="M7 10h10" />
+    <path d="M8 14h8" />
+    <path d="M9 18h6" />
+    <path d="M12 6v12" />
+  `,
+  'Fast-Food': `
+    <path d="M4 10h16" />
+    <path d="M6 10c0-3 2-5 6-5s6 2 6 5" />
+    <path d="M8 14h8" />
+    <path d="M9 18h6" />
+  `,
+  'Desserts': `
+    <path d="M5 18h14" />
+    <path d="M7 18V9h10v9" />
+    <path d="M7 9c1.3-2.7 3-4 5-4s3.7 1.3 5 4" />
+    <path d="M12 5v4" />
+  `,
+  'Drinks': `
+    <path d="M7 4h10l-1 8a4 4 0 0 1-4 3h0a4 4 0 0 1-4-3L7 4Z" />
+    <path d="M9 20h6" />
+    <path d="M12 15v5" />
+  `,
+};
+
+const icon = icons[name] || icons['Desserts'];
+---
+
+<svg
+  class={className}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.55"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  set:html={icon}
+/>

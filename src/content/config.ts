@@ -14,6 +14,9 @@ const recipeSchema = z.object({
     '意法',
     '南洋',
     'Silk-Road',
+    'Latin-America',
+    'Japan-Korea',
+    'Fast-Food',
     'Desserts',
     'Drinks'
   ]),

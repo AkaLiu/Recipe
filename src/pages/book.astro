@@ -655,7 +655,7 @@ function getRecipeSummary(body: string) {
     <section class="page cover-page">
       {coverRecipe && (
         <div class="cover-media">
-          <img src={getRecipeImageSrc(coverRecipe.data.coverImage)} alt={coverRecipe.data.title} />
+          <img src={getRecipeImageSrc(coverRecipe.data.coverImage, 'pdf')} alt={coverRecipe.data.title} />
           <div class="cover-overlay"></div>
         </div>
       )}
@@ -703,7 +703,7 @@ function getRecipeSummary(body: string) {
     {categories.map((cat) => {
       const recipes = recipesByCategory[cat.name];
       if (!recipes?.length) return null;
-      const sectionImage = getRecipeImageSrc(recipes[0].coverImage);
+      const sectionImage = getRecipeImageSrc(recipes[0].coverImage, 'pdf');
 
       return (
         <>
@@ -728,7 +728,7 @@ function getRecipeSummary(body: string) {
               <article class="page recipe-page">
                 <div class="recipe-shell" data-recipe-shell>
                   <header class="recipe-hero">
-                    <img src={getRecipeImageSrc(recipe.coverImage)} alt={recipe.title} />
+                    <img src={getRecipeImageSrc(recipe.coverImage, 'pdf')} alt={recipe.title} />
                     <div class="recipe-hero-copy">
                       <div class="kicker">{categoryLabels[cat.name]}</div>
                       <h1 class="recipe-title">{recipe.title}</h1>

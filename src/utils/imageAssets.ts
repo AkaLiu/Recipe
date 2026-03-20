@@ -6,11 +6,24 @@ function getOptimizedCandidate(src: string) {
   return src.replace(new RegExp(`${ext}$`), '.optimized.webp');
 }
 
-export function getRecipeImageSrc(src: string) {
+function getPdfCandidate(src: string) {
+  const ext = extname(src);
+  return src.replace(new RegExp(`${ext}$`), '.pdf.jpg');
+}
+
+function hasPublicAsset(src: string) {
+  const assetPath = join(process.cwd(), 'public', src.replace(/^\//, ''));
+  return existsSync(assetPath);
+}
+
+export function getRecipeImageSrc(src: string, variant: 'default' | 'pdf' = 'default') {
   if (!src.startsWith('/') || src.startsWith('//')) return src;
 
-  const optimizedSrc = getOptimizedCandidate(src);
-  const optimizedPath = join(process.cwd(), 'public', optimizedSrc.replace(/^\//, ''));
+  if (variant === 'pdf') {
+    const pdfSrc = getPdfCandidate(src);
+    if (hasPublicAsset(pdfSrc)) return pdfSrc;
+  }
 
-  return existsSync(optimizedPath) ? optimizedSrc : src;
+  const optimizedSrc = getOptimizedCandidate(src);
+  return hasPublicAsset(optimizedSrc) ? optimizedSrc : src;
 }

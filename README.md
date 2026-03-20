@@ -85,6 +85,11 @@ npm run pdf:book
 npm run export:book
 ```
 
+- 导出前会额外生成一套 PDF 专用图片
+- 对大于 `1MB` 或长边过大的本地图，会优先压到更适合打印的规格，再用于 `/book` 和导出的 PDF
+- 网页主图仍保持常规展示版本，不会因为 PDF 压缩而一起降质
+- 导出完成后还会自动对最终 PDF 做一次压缩，减小仓库体积和下载体积
+
 GitHub Actions 里也提供了手动的 `Export PDF Book` workflow，可按需生成并下载 PDF artifact。
 
 ## 开发

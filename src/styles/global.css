@@ -508,19 +508,12 @@
   }
 
   .section-header-row {
-    @apply flex flex-col items-center gap-5 text-center lg:flex-row lg:items-end lg:justify-between lg:text-left;
+    @apply flex flex-col items-center gap-5 text-center;
   }
 
   .section-header-row .section-heading::after {
     margin-left: auto;
     margin-right: auto;
-  }
-
-  @media (min-width: 1024px) {
-    .section-header-row .section-heading::after {
-      margin-left: 0;
-      margin-right: 0;
-    }
   }
 
   .recipe-meta-grid {
